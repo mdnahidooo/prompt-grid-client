@@ -20,21 +20,21 @@ export default async function DashboardLayout({ children }) {
     // 2. Define functional links matching requirement mappings
     const linksByRole = {
         admin: [
-            { label: "Platform Insights", path: "/dashboard/admin" },
-            { label: "User Directory", path: "/dashboard/admin/users" },
-            { label: "Marketplace Control", path: "/dashboard/admin/prompts" },
-            { label: "Transaction Logs", path: "/dashboard/admin/payments" },
-            { label: "Moderation Queue", path: "/dashboard/admin/reports" },
+            { label: "Admin Analytics", path: "/dashboard/admin" },
+            { label: "All Users", path: "/dashboard/admin/users" },
+            { label: "All Prompts", path: "/dashboard/admin/prompts" },
+            { label: "All Payments", path: "/dashboard/admin/payments" },
+            { label: "Reported Prompts", path: "/dashboard/admin/reports" },
         ],
         creator: [
             { label: "Creator Home", path: "/dashboard/creator" },
             { label: "Add Prompt", path: "/dashboard/creator/add" },
-            { label: "My Submissions", path: "/dashboard/creator/my-prompts" },
+            { label: "My Prompts", path: "/dashboard/creator/my-prompts" },
+            { label: "Profile Overview", path: "/dashboard/creator/profile" },
         ],
         user: [
-            { label: "Profile Overview", path: "/dashboard/user" },
-            { label: "Add Prompt", path: "/dashboard/user/add" },
-            { label: "My Submissions", path: "/dashboard/user/my-prompts" },
+            { label: "My profile", path: "/dashboard/user" },
+            { label: "My Prompts", path: "/dashboard/user/my-prompts" },
             { label: "Saved Bookmarks", path: "/dashboard/user/bookmarks" },
             { label: "My Reviews", path: "/dashboard/user/reviews" },
         ],
@@ -49,15 +49,17 @@ export default async function DashboardLayout({ children }) {
             <aside className="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-[#306D29]/10 p-6 flex flex-col justify-between shrink-0">
                 <div className="space-y-6">
                     {/* Brand Banner */}
-                    <div className="flex items-center gap-2">
-                        <span className="font-mono text-lg text-[#306D29] font-black">[ ⬚ ]</span>
-                        <div className="flex flex-col">
-                            <span className="font-black text-sm tracking-tight leading-none">PromptGrid</span>
-                            <span className="text-[10px] uppercase font-black tracking-wider text-[#306D29] mt-1 bg-[#306D29]/10 px-1.5 py-0.5 rounded-md w-max">
-                                {role} panel
-                            </span>
+                    <Link href={'/'}>
+                        <div className="flex items-center gap-2">
+                            <span className="font-mono text-lg text-[#306D29] font-black">[ ⬚ ]</span>
+                            <div className="flex flex-col">
+                                <span className="font-black text-sm tracking-tight leading-none">PromptGrid</span>
+                                <span className="text-[10px] uppercase font-black tracking-wider text-[#306D29] mt-1 bg-[#306D29]/10 px-1.5 py-0.5 rounded-md w-max">
+                                    {role} panel
+                                </span>
+                            </div>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* Conditional Dynamic Link Tree */}
                     <nav className="flex flex-row md:flex-col overflow-x-auto md:overflow-visible gap-1 pb-2 md:pb-0">
