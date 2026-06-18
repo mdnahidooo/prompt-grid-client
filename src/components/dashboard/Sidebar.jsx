@@ -1,72 +1,152 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
-export default function Sidebar({ user }) {
-    const role = user.role || "user";
+import {
+    ShieldCheck,
+    Users,
+    FileText,
+    CreditCard,
+    Flag,
+    Home,
+    PlusCircle,
+    FolderKanban,
+    UserCircle,
+    Bookmark,
+    Star,
+    Circle,
+} from "lucide-react";
+import { Chip } from "@heroui/react";
 
-    // Role-based navigation mapping
-    const links = {
-        admin: [
-            { label: "Overview", path: "/dashboard/admin" },
-            { label: "Users", path: "/dashboard/admin/users" },
-            { label: "Prompts", path: "/dashboard/admin/prompts" },
-            { label: "Payments", path: "/dashboard/admin/payments" },
-            { label: "Reports", path: "/dashboard/admin/reports" }
-        ],
-        creator: [
-            { label: "Studio", path: "/dashboard/creator" },
-            { label: "Add Prompt", path: "/dashboard/creator/add" },
-            { label: "My Prompts", path: "/dashboard/creator/my-prompts" }
-        ],
-        user: [
-            { label: "Profile", path: "/dashboard/user" },
-            { label: "Add Prompt", path: "/dashboard/user/add" },
-            { label: "My Prompts", path: "/dashboard/user/my-prompts" },
-            { label: "Saved", path: "/dashboard/user/bookmarks" },
-            { label: "Reviews", path: "/dashboard/user/reviews" }
-        ],
+/* ICON MAP */
+const iconMap = {
+    ShieldCheck,
+    Users,
+    FileText,
+    CreditCard,
+    Flag,
+    Home,
+    PlusCircle,
+    FolderKanban,
+    UserCircle,
+    Bookmark,
+    Star,
+};
+
+export default function Sidebar({ user, role, linksByRole }) {
+    const pathname = usePathname();
+    const router = useRouter();
+
+    const activeNavigation = linksByRole[role] || linksByRole.user;
+
+    /* LOGOUT HANDLER */
+    const handleLogout = async () => {
+        await authClient.signOut();
+        router.push("/");
     };
 
-    const activeNavigation = links[role] || links.user;
-
     return (
-        <aside className="w-full md:w-72 bg-white border-r border-black/6 p-8 flex flex-col justify-between shrink-0 h-screen sticky top-0">
-            <div className="space-y-10">
-                {/* Logo Section */}
-                <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-black">P</div>
-                    <span className="font-bold text-lg tracking-tighter">PromptGrid</span>
+        <aside
+            className="w-full md:w-64 text-white border-b md:border-b-0 md:border-r border-white/10 p-6 flex flex-col justify-between shrink-0"
+            style={{ backgroundColor: "#0D530E" }}
+        >
+            
+            {/* TOP */}
+            <div className="space-y-6">
+
+                {/* BRAND */}
+                <Link href="/">
+                    <div className="flex items-center gap-3 group">
+
+                        <div className="flex items-center gap-2">
+                            <span className="font-mono text-2xl text-white font-black">[ ⬚ ]</span>
+                            <span className="font-black text-lg tracking-tight">PromptGrid</span>
+                        </div>
+
+                    </div>
+                </Link>
+
+                {/* DIVIDER */}
+                <div className="pt-2">
+                    <div className="border-t border-white/15" />
                 </div>
 
-                {/* Nav Links */}
-                <nav className="space-y-1">
-                    {activeNavigation.map((link) => (
-                        <Link
-                            key={link.path}
-                            href={link.path}
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-black/50 hover:bg-[#FBF5DD] hover:text-[#306D29] transition-all"
-                        >
-                            {link.label}
-                        </Link>
-                    ))}
+                {/* NAV */}
+                <nav className="flex flex-row md:flex-col overflow-x-auto md:overflow-visible gap-2">
+
+                    {activeNavigation.map((link, idx) => {
+                        const Icon = iconMap[link.icon] || Circle;
+                        const isActive = pathname === link.path;
+
+                        return (
+                            <Link
+                                key={idx}
+                                href={link.path}
+                                className={`group whitespace-nowrap text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all duration-200 border ${isActive
+                                        ? "bg-white text-[#0D530E] shadow-sm"
+                                        : "text-white/90 hover:text-white hover:bg-white/10 border-transparent"
+                                    }`}
+                            >
+                                <Icon
+                                    size={18}
+                                    className="shrink-0 text-current stroke-2"
+                                />
+                                <span>{link.label}</span>
+                            </Link>
+                        );
+                    })}
                 </nav>
+
             </div>
 
-            {/* Profile Section */}
-            <div className="pt-6 border-t border-black/6">
-                <div className="flex items-center gap-3">
-                    <div className="relative w-10 h-10 rounded-full overflow-hidden border border-black/10">
-                        {user.image ? (
-                            <Image src={user.image} alt="Avatar" fill className="object-cover" unoptimized />
-                        ) : (
-                            <div className="w-full h-full bg-black/5 flex items-center justify-center font-bold text-xs">{user.name?.[0]?.toUpperCase()}</div>
-                        )}
+            {/* BOTTOM */}
+            <div className="pt-4 border-t border-white/10 space-y-3">
+
+                <div className="flex items-center justify-between gap-3">
+
+                    {/* USER */}
+                    <div className="flex items-center gap-3 min-w-0">
+
+                        <div className="relative w-9 h-9 rounded-full bg-white/10 border border-white/20 overflow-hidden flex items-center justify-center text-white font-bold shrink-0">
+                            {user.image ? (
+                                <Image
+                                    src={user.image}
+                                    alt={user.name || "User"}
+                                    fill
+                                    className="object-cover"
+                                    unoptimized
+                                />
+                            ) : (
+                                user.name?.[0]?.toUpperCase()
+                            )}
+                        </div>
+
+                        <div className="flex flex-col leading-tight min-w-0">
+                            <span className="text-xs font-semibold text-white truncate">
+                                {user.name}
+                            </span>
+                            <span className="text-[10px] text-white/60 truncate">
+                                {user.email}
+                            </span>
+                        </div>
+
                     </div>
-                    <div className="overflow-hidden">
-                        <p className="text-sm font-bold truncate">{user.name}</p>
-                        <p className="text-[11px] text-black/40 uppercase tracking-wider font-semibold">{role}</p>
-                    </div>
+
+                    {/* LOGOUT (WORKING) */}
+                    <button
+                        onClick={handleLogout}
+                        className="group flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 transition-all duration-200"
+                    >
+                        <span className="text-[10px] font-semibold text-white/80 group-hover:text-white">
+                            Logout
+                        </span>
+                    </button>
+
                 </div>
+
             </div>
         </aside>
     );
