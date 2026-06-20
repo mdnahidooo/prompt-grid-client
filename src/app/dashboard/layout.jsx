@@ -28,7 +28,7 @@ export default async function DashboardLayout({ children }) {
             { label: "Creator Home", path: "/dashboard/creator", icon: "Home" },
             { label: "Add Prompt", path: "/dashboard/creator/add", icon: "PlusCircle" },
             { label: "My Prompts", path: "/dashboard/creator/my-prompts", icon: "FolderKanban" },
-            { label: "Profile Overview", path: "/dashboard/creator/profile", icon: "UserCircle" },
+            { label: "Profile", path: "/dashboard/creator/profile", icon: "UserCircle" },
         ],
         user: [
             { label: "My profile", path: "/dashboard/user", icon: "UserCircle" },

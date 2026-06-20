@@ -10,7 +10,7 @@ import DeletePromptModal from './DeletePromptModal';
 
 export default function MyPrompts({ prompts}) {
     return (
-        <div className="min-h-screen bg-[#F0FBFC] py-10 px-4">
+        <div>
 
             {/* HEADER */}
             <div className="max-w-7xl mx-auto mb-8">
