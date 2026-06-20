@@ -13,12 +13,14 @@ import { getAdminPrompts } from "@/lib/api/admin/prompts";
 import DeletePromptModal from "./DeletePromptModal";
 import ApprovePromptButton from "./ApprovePromptButton";
 import RejectPromptButton from "./RejectPromptButton";
+import FeatureToggleButton from "./FeatureToggleButton";
+
 
 export default async function AdminPromptsPage() {
     const prompts = await getAdminPrompts();
     // console.log(prompts);
-
     
+
 
     return (
         <div className="space-y-6">
@@ -103,13 +105,11 @@ export default async function AdminPromptsPage() {
                                 <td className="px-4 py-4">
                                     <div>
                                         <p className="font-semibold">
-                                            {prompt.creatorName ||
-                                                "Unknown"}
+                                            {prompt.creator?.name || "Unknown"}
                                         </p>
 
                                         <p className="text-xs text-black/60">
-                                            {prompt.creatorEmail ||
-                                                "No Email"}
+                                            {prompt.creator?.email || "No Email"}
                                         </p>
                                     </div>
                                 </td>
@@ -122,10 +122,10 @@ export default async function AdminPromptsPage() {
                                 {/* Visibility */}
                                 <td className="px-4 py-4">
                                     <span
-                                        className={`px - 3 py - 1 rounded - full text - xs font - bold ${prompt.visibility ===
-                                                "public"
-                                                ? "bg-green-100 text-green-700"
-                                                : "bg-gray-100 text-gray-700"
+                                        className={`px-3 py-1 rounded-full text-xs font-bold ${prompt.visibility ===
+                                            "public"
+                                            ? "bg-green-100 text-green-700"
+                                            : "bg-gray-100 text-gray-700"
                                             } `}
                                     >
                                         {prompt.visibility}
@@ -134,30 +134,19 @@ export default async function AdminPromptsPage() {
 
                                 {/* Featured */}
                                 <td className="px-4 py-4">
-                                    <button
-                                        className={`px - 3 py - 1 rounded - xl text - xs font - bold transition ${prompt.isFeatured
-                                                ? "bg-amber-500 text-white"
-                                                : "bg-slate-200 text-slate-700"
-                                            } `}
-                                    >
-                                        <Star
-                                            size={14}
-                                            className="inline mr-1"
-                                        />
-                                        Featured
-                                    </button>
+                                    <FeatureToggleButton prompt={prompt} />
                                 </td>
 
                                 {/* Status */}
                                 <td className="px-4 py-4">
                                     <span
-                                        className={`px - 3 py - 1 rounded - full text - xs font - bold ${prompt.status ===
-                                                "approved"
-                                                ? "bg-green-100 text-green-700"
-                                                : prompt.status ===
-                                                    "rejected"
-                                                    ? "bg-red-100 text-red-700"
-                                                    : "bg-yellow-100 text-yellow-700"
+                                        className={`px-3 py-1 rounded-full text-xs font-bold ${prompt.status ===
+                                            "approved"
+                                            ? "bg-green-100 text-green-700"
+                                            : prompt.status ===
+                                                "rejected"
+                                                ? "bg-red-100 text-red-700"
+                                                : "bg-yellow-100 text-yellow-700"
                                             } `}
                                     >
                                         {prompt.status}
