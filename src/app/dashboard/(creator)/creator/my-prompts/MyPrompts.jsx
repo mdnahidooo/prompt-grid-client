@@ -7,6 +7,7 @@ import { Card, Table, Button } from '@heroui/react';
 // import PromptDetailsButton from './PromptDetailsButton';
 import UpdatePromptModal from './UpdatePromptModal';
 import DeletePromptModal from './DeletePromptModal';
+import RejectFeedbackModal from './RejectFeedbackModal';
 
 export default function MyPrompts({ prompts}) {
     return (
@@ -67,6 +68,12 @@ export default function MyPrompts({ prompts}) {
                                 <Table.Column
                                     className="bg-[#F8FAFC] text-[#3F4255] text-center"
                                 >
+                                    Rejection Feedback
+                                </Table.Column>
+
+                                <Table.Column
+                                    className="bg-[#F8FAFC] text-[#3F4255] text-center"
+                                >
                                     Actions
                                 </Table.Column>
 
@@ -110,6 +117,10 @@ export default function MyPrompts({ prompts}) {
                                                 >
                                                     {prompt.status}
                                                 </span>
+                                            </Table.Cell>
+
+                                            <Table.Cell className="text-[#667085]">
+                                                <RejectFeedbackModal prompt={prompt} />
                                             </Table.Cell>
 
                                             {/* ACTIONS */}

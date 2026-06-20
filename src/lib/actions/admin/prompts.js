@@ -17,14 +17,15 @@ export const approvePrompt = async (id) => {
 };
 
 // Reject prompt
-export const rejectPrompt = async (id, feedback) => {
+export const rejectPrompt = async (data, id) => {
     const res = await serverMutation(
-        `/api/admin/prompts/${id}/status`,
-        { status: "rejected", feedback },
+        `/api/admin/prompts/${id}/reject`,
+        data,
         "PATCH"
     );
 
     revalidatePath("/dashboard/admin/prompts");
+
     return res;
 };
 
@@ -39,6 +40,7 @@ export const toggleFeature = async (id, current) => {
     revalidatePath("/dashboard/admin/prompts");
     return res;
 };
+
 
 // Delete prompt
 export const deletePrompt = async (id) => {
