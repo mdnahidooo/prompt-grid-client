@@ -9,3 +9,9 @@ export const getCreatorPrompt = async (creatorId) => {
 export const getCreatorAllPrompt = async (creatorId) => {
     return serverFetch(`/api/my-prompts?creatorId=${creatorId}`);
 }
+
+
+
+export const getFeaturedPrompts = async () => {
+    return serverFetch("/api/prompts/featured");
+};

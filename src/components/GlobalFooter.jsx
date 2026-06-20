@@ -10,18 +10,18 @@ export default function GlobalFooter() {
     const { data: session, isPending } = authClient.useSession();
     const user = session?.user;
 
-    if (pathname.includes('dashboard')) {
+    if (pathname.includes('auth')) {
         return null;
     }
     return (
-        <footer className="bg-[#E7E1B1]/40 border-t border-[#306D29]/10 text-black mt-auto select-none">
+        <footer className="bg-[#E7E1B1]/40 border-t border-[#306D29]/10 text-black mt-auto select-none py-10 pb-10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 
                     {/* Brand Section */}
                     <div className="md:col-span-1 flex flex-col gap-3">
                         <div className="flex items-center gap-2">
-                            <span className="font-mono text-xl text-[#306D29] font-black">[ ⬚ ]</span>
+                            <span className="font-mono text-xl text-[#059669] font-black">[ ⬚ ]</span>
                             <span className="font-black text-lg tracking-tight">PromptGrid</span>
                         </div>
                         <p className="text-xs text-black/60 leading-relaxed">
@@ -31,26 +31,26 @@ export default function GlobalFooter() {
 
                     {/* Navigation Columns */}
                     <div>
-                        <h4 className="text-xs font-black uppercase tracking-wider text-[#306D29] mb-3">Platform</h4>
+                        <h4 className="text-xs font-black uppercase tracking-wider text-[#059669] mb-3">Platform</h4>
                         <ul className="space-y-2 text-xs font-bold text-black/70">
                             <li><Link href="/" className="hover:text-[#306D29] transition-colors">Home</Link></li>
-                            <li><Link href="/prompts" className="hover:text-[#306D29] transition-colors">Explore Prompts</Link></li>
-                            <li><Link href="/pricing" className="hover:text-[#306D29] transition-colors">Premium Plans</Link></li>
+                            <li><Link href="/prompts" className="hover:text-[#059669] transition-colors">Explore Prompts</Link></li>
+                            <li><Link href="/pricing" className="hover:text-[#059669] transition-colors">Premium Plans</Link></li>
                         </ul>
                     </div>
 
                     <div>
-                        <h4 className="text-xs font-black uppercase tracking-wider text-[#306D29] mb-3">Resources</h4>
+                        <h4 className="text-xs font-black uppercase tracking-wider text-[#059669] mb-3">Resources</h4>
                         <ul className="space-y-2 text-xs font-bold text-black/70">
-                            <li><Link href="/docs" className="hover:text-[#306D29] transition-colors">Documentation</Link></li>
-                            <li><Link href="/blog" className="hover:text-[#306D29] transition-colors">AI Blog</Link></li>
-                            <li><Link href="/support" className="hover:text-[#306D29] transition-colors">Help Center</Link></li>
+                            <li><Link href="/docs" className="hover:text-[#059669] transition-colors">Documentation</Link></li>
+                            <li><Link href="/blog" className="hover:text-[#059669] transition-colors">AI Blog</Link></li>
+                            <li><Link href="/support" className="hover:text-[#059669] transition-colors">Help Center</Link></li>
                         </ul>
                     </div>
 
                     {/* Social Media & Newsletter Section */}
                     <div>
-                        <h4 className="text-xs font-black uppercase tracking-wider text-[#306D29] mb-3">Stay Connected</h4>
+                        <h4 className="text-xs font-black uppercase tracking-wider text-[#059669] mb-3">Stay Connected</h4>
                         <p className="text-xs text-black/60 mb-4">Follow our journey on social channels.</p>
 
                         {/* Social Links Row */}
@@ -60,7 +60,7 @@ export default function GlobalFooter() {
                                 href="https://x.com"
                                 target="_blank"
                                 rel="noreferrer"
-                                className="p-2 bg-black/5 hover:bg-[#306D29]/10 text-black hover:text-[#306D29] rounded-xl transition-colors border border-black/5"
+                                className="p-2 bg-black/5 hover:bg-[#306D29]/10 text-black hover:text-[#059669] rounded-xl transition-colors border border-black/5"
                                 aria-label="Twitter"
                             >
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -73,7 +73,7 @@ export default function GlobalFooter() {
                                 href="https://github.com"
                                 target="_blank"
                                 rel="noreferrer"
-                                className="p-2 bg-black/5 hover:bg-[#306D29]/10 text-black hover:text-[#306D29] rounded-xl transition-colors border border-black/5"
+                                className="p-2 bg-black/5 hover:bg-[#306D29]/10 text-black hover:text-[#059669] rounded-xl transition-colors border border-black/5"
                                 aria-label="GitHub"
                             >
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -86,7 +86,7 @@ export default function GlobalFooter() {
                                 href="https://linkedin.com"
                                 target="_blank"
                                 rel="noreferrer"
-                                className="p-2 bg-black/5 hover:bg-[#306D29]/10 text-black hover:text-[#306D29] rounded-xl transition-colors border border-black/5"
+                                className="p-2 bg-black/5 hover:bg-[#306D29]/10 text-black hover:text-[#059669] rounded-xl transition-colors border border-black/5"
                                 aria-label="LinkedIn"
                             >
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">

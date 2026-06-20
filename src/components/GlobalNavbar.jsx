@@ -28,6 +28,9 @@ export default function GlobalNavbar() {
     if (pathname.includes('dashboard')) {
         return null;
     }
+    if (pathname.includes('auth')) {
+        return null;
+    }
 
     const handleLogout = async () => {
         await authClient.signOut({
@@ -49,7 +52,7 @@ export default function GlobalNavbar() {
     };
 
     return (
-        <nav className="bg-[#E7E1B1]/90 border-b border-[#306D29]/10 sticky top-0 z-50 backdrop-blur-md transition-all shadow-sm">
+        <nav className="bg-white py-4 border-b border-[#306D29]/10 sticky top-0 z-50 backdrop-blur-md transition-all shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
 
@@ -57,17 +60,17 @@ export default function GlobalNavbar() {
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => setIsDrawerOpen(true)}
-                            className="sm:hidden text-black hover:text-[#306D29] focus:outline-none p-1.5 rounded-xl hover:bg-black/5 transition-all"
+                            className="sm:hidden text-black hover:text-[#059669] focus:outline-none p-1.5 rounded-xl hover:bg-black/5 transition-all"
                             aria-label="Open Menu"
                         >
                             <Bars className="w-5 h-5" />
                         </button>
 
                         <Link href="/" className="flex items-center gap-2 group select-none">
-                            <span className="font-mono text-xl text-[#306D29] font-black tracking-tight group-hover:scale-110 transition-transform duration-200">
+                            <span className="font-mono text-xl text-[#059669] font-black tracking-tight group-hover:scale-110 transition-transform duration-200">
                                 [ ⬚ ]
                             </span>
-                            <p className="font-black text-xl text-black tracking-tight group-hover:text-[#306D29] transition-colors duration-200">
+                            <p className="font-black text-xl text-black tracking-tight group-hover:text-[#059669] transition-colors duration-200">
                                 PromptGrid
                             </p>
                         </Link>
@@ -78,8 +81,8 @@ export default function GlobalNavbar() {
                         <Link
                             href="/"
                             className={`flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-lg transition-all duration-200 ${pathname === "/"
-                                    ? "bg-[#306D29] text-white shadow-sm"
-                                    : "text-black hover:text-[#306D29] hover:bg-white/40"
+                                ? "bg-[#059669] text-white shadow-sm"
+                                : "text-black hover:text-[#059669] hover:bg-white/40"
                                 }`}
                         >
                             <House className="w-3.5 h-3.5" />
@@ -88,8 +91,8 @@ export default function GlobalNavbar() {
                         <Link
                             href="/prompts"
                             className={`flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-lg transition-all duration-200 ${pathname === "/prompts"
-                                    ? "bg-[#306D29] text-white shadow-sm"
-                                    : "text-black hover:text-[#306D29] hover:bg-white/40"
+                                ? "bg-[#059669] text-white shadow-sm"
+                                : "text-black hover:text-[#059669] hover:bg-white/40"
                                 }`}
                         >
                             <Compass className="w-3.5 h-3.5" />
@@ -99,8 +102,8 @@ export default function GlobalNavbar() {
                             <Link
                                 href={getDashboardPath()}
                                 className={`flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-lg transition-all duration-200 ${pathname.startsWith("/dashboard")
-                                        ? "bg-[#306D29] text-white shadow-sm"
-                                        : "text-black hover:text-[#306D29] hover:bg-white/40"
+                                    ? "bg-[#059669] text-white shadow-sm"
+                                    : "text-black hover:text-[#059669] hover:bg-white/40"
                                     }`}
                             >
                                 <LayoutTabs className="w-3.5 h-3.5" />
@@ -131,19 +134,19 @@ export default function GlobalNavbar() {
                                                 className="object-cover"
                                             />
                                         ) : (
-                                            <div className="w-full h-full bg-[#306D29] text-[#FBF5DD] flex items-center justify-center font-bold text-xs uppercase">
+                                                    <div className="w-full h-full bg-[#059669] text-[#FBF5DD] flex items-center justify-center font-bold text-xs uppercase">
                                                 {user.name?.charAt(0)}
                                             </div>
                                         )}
                                     </div>
 
                                     <div className="hidden md:flex flex-col leading-tight select-none">
-                                        <span className="text-xs font-bold text-black group-hover:text-[#306D29] transition-colors truncate max-w-25">
+                                            <span className="text-xs font-bold text-black group-hover:text-[#059669] transition-colors truncate max-w-25">
                                             {user.name}
                                         </span>
                                         <span className={`text-[8px] font-black uppercase tracking-widest px-1.5 mt-0.5 rounded border w-max ${user.plan === "premium"
                                                 ? "bg-amber-500/10 text-amber-800 border-amber-500/20"
-                                                : "bg-[#306D29]/10 text-[#306D29] border-[#306D29]/20"
+                                                : "bg-[#306D29]/10 text-[#059669] border-[#306D29]/20"
                                             }`}>
                                             {user.plan || "free"}
                                         </span>
@@ -154,7 +157,7 @@ export default function GlobalNavbar() {
                                 {/* Desktop Direct Logout Button with SignOut Icon */}
                                 <button
                                     onClick={handleLogout}
-                                    className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-red-600 border border-red-200/50 bg-red-50/40 hover:bg-red-50 px-3 py-2 rounded-xl transition-all active:scale-95 shadow-2sm"
+                                        className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-black border border-gray-200 bg-[#f6f6f7] hover:bg-[#e7eaf0] px-5 py-3 rounded-full transition-all active:scale-95 shadow-2sm"
                                 >
                                         <ArrowRightFromSquare className="w-3.5 h-3.5" />
                                     <span>Logout</span>
@@ -166,13 +169,13 @@ export default function GlobalNavbar() {
                                         <div className="px-4 py-2 border-b border-black/5 md:hidden">
                                             <p className="font-bold text-sm text-black truncate">{user.name}</p>
                                             <p className="text-xs text-black/50 truncate mb-1.5">{user.email}</p>
-                                            <span className="inline-block px-1.5 py-0.5 text-[8px] uppercase tracking-wider font-extrabold bg-[#FBF5DD] text-[#306D29] rounded border border-[#E7E1B1]">
+                                                <span className="inline-block px-1.5 py-0.5 text-[8px] uppercase tracking-wider font-extrabold bg-[#FBF5DD] text-[#059669] rounded border border-[#E7E1B1]">
                                                 Plan: {user.plan || "free"}
                                             </span>
                                         </div>
                                         <div className="px-4 py-1.5 hidden md:block border-b border-black/5">
                                             <p className="text-xs font-medium text-black/40 truncate">{user.email}</p>
-                                            <p className="text-[10px] font-bold text-[#306D29] mt-0.5 uppercase tracking-wide">Role: {user.role}</p>
+                                                <p className="text-[10px] font-bold text-[#059669] mt-0.5 uppercase tracking-wide">Role: {user.role}</p>
                                         </div>
                                         <Link
                                             href={getDashboardPath()}
@@ -194,10 +197,10 @@ export default function GlobalNavbar() {
                             </div>
                         ) : (
                             <div className="flex items-center gap-2">
-                                <Link href="/auth/signin" className="text-black hover:text-[#306D29] font-bold text-xs px-3 py-2 rounded-xl hover:bg-black/5 transition-all">
+                                <Link href="/auth/signin" className="text-black hover:text-[#306D29] font-bold text-xs px-5 py-3 rounded-full hover:bg-black/5 transition-all">
                                     Login
                                 </Link>
-                                <Link href="/auth/signup" className="bg-[#306D29] text-white hover:bg-[#0D530E] font-bold text-xs px-4 py-2 rounded-xl shadow-sm transition-all active:scale-95">
+                                        <Link href="/auth/signup" className="bg-[#059669] text-white hover:bg-[#059669] font-bold text-xs px-5 py-3 rounded-full shadow-sm transition-all active:scale-95">
                                     Register
                                 </Link>
                             </div>
@@ -215,7 +218,7 @@ export default function GlobalNavbar() {
 
                         <div className="flex items-center justify-between pb-4 border-b border-black/5">
                             <div className="flex items-center gap-2">
-                                <span className="font-mono text-xl text-[#306D29] font-bold">[ ⬚ ]</span>
+                                <span className="font-mono text-xl text-[#059669] font-bold">[ ⬚ ]</span>
                                 <p className="font-extrabold text-lg text-black">PromptGrid</p>
                             </div>
                             <button onClick={() => setIsDrawerOpen(false)} className="text-black hover:text-red-600 p-1.5 rounded-xl hover:bg-black/5 focus:outline-none transition-all">
@@ -236,7 +239,7 @@ export default function GlobalNavbar() {
                                             className="object-cover"
                                         />
                                     ) : (
-                                        <div className="w-full h-full bg-[#306D29] text-[#FBF5DD] flex items-center justify-center font-bold uppercase">
+                                            <div className="w-full h-full bg-[#059669] text-[#FBF5DD] flex items-center justify-center font-bold uppercase">
                                             {user.name?.charAt(0)}
                                         </div>
                                     )}
@@ -245,7 +248,7 @@ export default function GlobalNavbar() {
                                     <span className="text-sm font-bold text-black truncate">{user.name}</span>
                                     <span className={`text-[9px] uppercase font-black px-1.5 py-0.2 rounded border mt-0.5 w-max ${user.plan === "premium"
                                             ? "bg-amber-500/10 text-amber-800 border-amber-500/20"
-                                            : "bg-[#306D29]/10 text-[#306D29] border border-[#306D29]/20"
+                                        : "bg-[#306D29]/10 text-[#059669] border border-[#306D29]/20"
                                         }`}>
                                         {user.plan || "free"}
                                     </span>
@@ -258,7 +261,7 @@ export default function GlobalNavbar() {
                             <Link
                                 href="/"
                                 onClick={() => setIsDrawerOpen(false)}
-                                className={`flex items-center gap-3 text-sm font-bold p-3 rounded-xl transition-all ${pathname === "/" ? "bg-[#306D29] text-white shadow-sm" : "hover:bg-black/5 text-black"
+                                className={`flex items-center gap-3 text-sm font-bold p-3 rounded-xl transition-all ${pathname === "/" ? "bg-[#059669] text-white shadow-sm" : "hover:bg-black/5 text-black"
                                     }`}
                             >
                                 <House className="w-4 h-4" />
@@ -267,7 +270,7 @@ export default function GlobalNavbar() {
                             <Link
                                 href="/prompts"
                                 onClick={() => setIsDrawerOpen(false)}
-                                className={`flex items-center gap-3 text-sm font-bold p-3 rounded-xl transition-all ${pathname === "/prompts" ? "bg-[#306D29] text-white shadow-sm" : "hover:bg-black/5 text-black"
+                                className={`flex items-center gap-3 text-sm font-bold p-3 rounded-xl transition-all ${pathname === "/prompts" ? "bg-[#059669] text-white shadow-sm" : "hover:bg-black/5 text-black"
                                     }`}
                             >
                                 <Compass className="w-4 h-4" />
@@ -277,7 +280,7 @@ export default function GlobalNavbar() {
                                 <Link
                                     href={getDashboardPath()}
                                     onClick={() => setIsDrawerOpen(false)}
-                                    className={`flex items-center gap-3 text-sm font-bold p-3 rounded-xl transition-all ${pathname.startsWith("/dashboard") ? "bg-[#306D29] text-white shadow-sm" : "hover:bg-black/5 text-black"
+                                    className={`flex items-center gap-3 text-sm font-bold p-3 rounded-xl transition-all ${pathname.startsWith("/dashboard") ? "bg-[#059669] text-white shadow-sm" : "hover:bg-black/5 text-black"
                                         }`}
                                 >
                                     <LayoutTabs className="w-4 h-4" />

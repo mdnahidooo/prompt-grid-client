@@ -52,13 +52,13 @@ export default function SignUpPage() {
         if (!error) {
             toast.success("Account created successfully!", {
                 style: {
-                    background: "#E7E1B1",
-                    color: "#000000", // Black text for success toast
-                    borderRadius: "16px",
-                    border: "1px solid #306D29",
+                    background: "white",
+                    color: "#059669", // Black text for success toast
+                    borderRadius: "px",
+                    border: "1px solid #059669",
                 },
                 progressStyle: {
-                    background: "#306D29",
+                    background: "#059669",
                 },
             });
 
@@ -68,13 +68,13 @@ export default function SignUpPage() {
         } else {
             toast.error(error.message || "Registration failed. Email may already exist", {
                 style: {
-                    background: "#E7E1B1",
+                    background: "white",
                     color: "#000000", // Black text for error toast
-                    borderRadius: "16px",
-                    border: "1px solid #0D530E",
+                    borderRadius: "2px",
+                    border: "1px solid red",
                 },
                 progressStyle: {
-                    background: "#306D29",
+                    background: "red",
                 },
             });
         }
@@ -96,7 +96,7 @@ export default function SignUpPage() {
             <Card className="relative overflow-hidden border border-[#E7E1B1] mx-auto w-full max-w-lg py-10 mt-5 bg-white shadow-md px-6 sm:px-10">
 
                 {/* ✨ Decorative Accent Shape */}
-                <div className="absolute -top-10 -right-10 w-58 h-58 bg-[#306D29] opacity-10 rounded-full pointer-events-none"></div>
+                <div className="absolute -top-10 -right-10 w-58 h-58 bg-[#059669] opacity-10 rounded-full pointer-events-none"></div>
 
                 <h1 className="text-center text-2xl font-bold text-[#000000]">
                     Sign Up
@@ -105,13 +105,13 @@ export default function SignUpPage() {
                 <Form className="flex flex-col gap-4 mt-4 w-full" onSubmit={onSubmit}>
                     <TextField isRequired name="name" type="text">
                         <Label className="text-[#000000] font-medium">Name</Label>
-                        <Input placeholder="Enter your name" className="w-full text-[#000000] border-[#E7E1B1] focus:border-[#306D29]" />
+                        <Input placeholder="Enter your name" className="w-full text-[#000000] border-[#E7E1B1] focus:border-[#059669]" />
                         <FieldError className="text-red-600 text-xs mt-1" />
                     </TextField>
 
                     <TextField name="image" type="text">
                         <Label className="text-[#000000] font-medium">Image URL</Label>
-                        <Input placeholder="Avatar Image URL (Optional)" className="w-full text-[#000000] border-[#E7E1B1] focus:border-[#306D29]" />
+                        <Input placeholder="Avatar Image URL (Optional)" className="w-full text-[#000000] border-[#E7E1B1] focus:border-[#059669]" />
                         <FieldError className="text-red-600 text-xs mt-1" />
                     </TextField>
 
@@ -127,7 +127,7 @@ export default function SignUpPage() {
                         }}
                     >
                         <Label className="text-[#000000] font-medium">Email</Label>
-                        <Input placeholder="Enter your email" className="w-full text-[#000000] border-[#E7E1B1] focus:border-[#306D29]" />
+                        <Input placeholder="Enter your email" className="w-full text-[#000000] border-[#E7E1B1] focus:border-[#059669]" />
                         <FieldError className="text-red-600 text-xs mt-1" />
                     </TextField>
 
@@ -146,9 +146,9 @@ export default function SignUpPage() {
                     >
                         <Label className="text-[#000000] font-medium">Password</Label>
                         <div className="relative w-full">
-                            <Input placeholder="Enter your password" className="w-full pr-10 text-[#000000] border-[#E7E1B1] focus:border-[#306D29]" />
+                            <Input placeholder="Enter your password" className="w-full pr-10 text-[#000000] border-[#E7E1B1] focus:border-[#059669]" />
                             <span
-                                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-[#306D29] z-20 flex items-center h-full px-1"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-[#059669] z-20 flex items-center h-full px-1"
                                 onClick={() => setIsShowPassword(!isShowPassword)}
                             >
                                 {isShowPassword ? <FaEye size={16} /> : <FaEyeSlash size={16} />}
@@ -182,7 +182,7 @@ export default function SignUpPage() {
                     </Select>
 
                     <div className="flex gap-3 pt-2">
-                        <Button type="submit" isLoading={loading} className="bg-[#306D29] text-white font-semibold flex-1">
+                        <Button type="submit" isLoading={loading} className="bg-[#059669] text-white font-semibold flex-1">
                             {!loading && <Check />}
                             Submit
                         </Button>
@@ -207,7 +207,7 @@ export default function SignUpPage() {
 
                 <p className="mt-6 text-center text-sm">
                     <span className="text-[#000000]/70">Already have an account? </span>
-                    <Link href="/auth/signin" className="text-[#0D530E] font-semibold hover:underline">
+                    <Link href="/auth/signin" className="text-[#059669] font-semibold hover:underline">
                         Login
                     </Link>
                 </p>

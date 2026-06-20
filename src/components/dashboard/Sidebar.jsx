@@ -51,7 +51,7 @@ export default function Sidebar({ user, role, linksByRole }) {
     return (
         <aside
             className="w-full md:w-64 text-white border-b md:border-b-0 md:border-r border-white/10 p-6 flex flex-col justify-between shrink-0"
-            style={{ backgroundColor: "#0D530E" }}
+            style={{ backgroundColor: "#059669" }}
         >
             
             {/* TOP */}
@@ -86,7 +86,7 @@ export default function Sidebar({ user, role, linksByRole }) {
                                 key={idx}
                                 href={link.path}
                                 className={`group whitespace-nowrap text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all duration-200 border ${isActive
-                                        ? "bg-white text-[#0D530E] shadow-sm"
+                                    ? "bg-white text-[#059669] shadow-sm"
                                         : "text-white/90 hover:text-white hover:bg-white/10 border-transparent"
                                     }`}
                             >

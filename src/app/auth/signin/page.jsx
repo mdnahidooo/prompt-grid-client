@@ -43,13 +43,13 @@ export default function SignInPage() {
         if (!error) {
             toast.success("Welcome back! Authentication successful.", {
                 style: {
-                    background: "#E7E1B1",
-                    color: "#000000",
-                    borderRadius: "16px",
-                    border: "1px solid #306D29",
+                    background: "white",
+                    color: "#059669", // Black text for success toast
+                    borderRadius: "px",
+                    border: "1px solid #059669",
                 },
                 progressStyle: {
-                    background: "#306D29",
+                    background: "#059669",
                 },
             });
 
@@ -65,7 +65,7 @@ export default function SignInPage() {
                     border: "1px solid #0D530E",
                 },
                 progressStyle: {
-                    background: "#306D29",
+                    background: "#059669",
                 },
             });
         }
@@ -86,8 +86,8 @@ export default function SignInPage() {
         <div className="flex items-center justify-center pb-20 pt-5 px-4 bg-[#FBF5DD] min-h-screen">
             <Card className="relative overflow-hidden border border-[#E7E1B1] mx-auto w-full max-w-lg py-10 mt-5 bg-white shadow-md px-6 sm:px-10">
 
-                {/* ✨ Decorative Accent Shape */}
-                <div className="absolute -top-10 -right-10 w-58 h-58 bg-[#306D29] opacity-10 rounded-full pointer-events-none"></div>
+                {/* Decorative Accent Shape */}
+                <div className="absolute -top-10 -right-10 w-58 h-58 bg-[#059669] opacity-10 rounded-full pointer-events-none"></div>
 
                 <h1 className="text-center text-2xl font-bold text-[#000000]">
                     Sign In
@@ -106,7 +106,7 @@ export default function SignInPage() {
                         }}
                     >
                         <Label className="text-[#000000] font-medium">Email</Label>
-                        <Input placeholder="Enter your email" className="w-full text-[#000000] border-[#E7E1B1] focus:border-[#306D29]" />
+                        <Input placeholder="Enter your email" className="w-full text-[#000000] border-[#E7E1B1] focus:border-[#059669]" />
                         <FieldError className="text-red-600 text-xs mt-1" />
                     </TextField>
 
@@ -118,7 +118,7 @@ export default function SignInPage() {
                     >
                         <Label className="text-[#000000] font-medium">Password</Label>
                         <div className="relative w-full">
-                            <Input placeholder="Enter your password" className="w-full pr-10 text-[#000000] border-[#E7E1B1] focus:border-[#306D29]" />
+                            <Input placeholder="Enter your password" className="w-full pr-10 text-[#000000] border-[#E7E1B1] focus:border-[#059669]" />
                             <span
                                 className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-[#306D29] z-20 flex items-center h-full px-1"
                                 onClick={() => setIsShowPassword(!isShowPassword)}
@@ -130,7 +130,7 @@ export default function SignInPage() {
                     </TextField>
 
                     <div className="flex gap-3 pt-4">
-                        <Button type="submit" isLoading={loading} className="bg-[#306D29] text-white font-semibold flex-1">
+                        <Button type="submit" isLoading={loading} className="bg-[#059669] text-white font-semibold flex-1">
                             {!loading && <Check />}
                             Sign In
                         </Button>
@@ -155,7 +155,7 @@ export default function SignInPage() {
 
                 <p className="mt-6 text-center text-sm">
                     <span className="text-[#000000]/70">New to PromptGrid? </span>
-                    <Link href="/auth/signup" className="text-[#0D530E] font-semibold hover:underline">
+                    <Link href="/auth/signup" className="text-[#059669] font-semibold hover:underline">
                         Create Account
                     </Link>
                 </p>
