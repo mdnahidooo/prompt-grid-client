@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import {
     Form,
     Fieldset,
@@ -8,234 +9,144 @@ import {
     TextArea,
     Label,
     Input,
-    FieldError,
     Select,
     ListBox,
     Button,
     toast
 } from '@heroui/react';
 
-import { ArrowUpToLine, Globe, Factory, ArrowRight, Pencil, ChevronDown } from '@gravity-ui/icons';
+import { ArrowUpToLine, ChevronDown } from '@gravity-ui/icons';
 import { createPrompt } from '@/lib/actions/prompt';
+import Image from 'next/image';
 
-
-// Layout Shared Style Constants (UNCHANGED)
-const textInputClass = "w-full bg-zinc-900/50 border border-zinc-800 text-white rounded-lg px-3 py-2.5 outline-none placeholder:text-zinc-600 focus:border-zinc-700 transition";
-const selectBoxClass = "w-full flex flex-col gap-1";
-const triggerClasses = "w-full bg-zinc-900/50 border border-zinc-800 text-white rounded-lg px-3 py-2.5 flex items-center justify-between outline-none data-[hover=true]:border-zinc-700";
-const popoverClasses = "bg-zinc-950 border border-zinc-800 rounded-lg p-1 shadow-xl min-w-[200px]";
-const listItemClasses = "text-zinc-300 px-3 py-2 rounded-md cursor-pointer hover:bg-zinc-900 hover:text-white outline-none data-[focused=true]:bg-zinc-900";
-const textAreaClass = "w-full bg-zinc-900/50 border border-zinc-800 text-white rounded-lg p-3 outline-none placeholder:text-zinc-600 focus:border-zinc-700 transition resize-none";
+// Updated Theme Constants (#FDFCF4 background)
+const textInputClass = "w-full bg-[#FDFCF4] border border-zinc-300 text-zinc-900 rounded-lg px-3 py-2.5 outline-none placeholder:text-zinc-400 focus:border-red-500 transition";
+const textAreaClass = "w-full bg-[#FDFCF4] border border-zinc-300 text-zinc-900 rounded-lg p-3 outline-none placeholder:text-zinc-400 focus:border-red-500 transition resize-none";
+const triggerClasses = "w-full bg-[#FDFCF4] border border-zinc-300 text-zinc-900 rounded-lg px-3 py-2.5 flex items-center justify-between outline-none data-[hover=true]:border-red-500";
+const popoverClasses = "bg-[#FDFCF4] border border-zinc-300 rounded-lg p-1 shadow-xl min-w-[200px]";
+const listItemClasses = "text-zinc-700 px-3 py-2 rounded-md cursor-pointer hover:bg-zinc-200 hover:text-black outline-none";
+const labelClass = "text-black font-medium";
 
 export default function AddPromptForm({ creator, creatorPrompt }) {
-
+    const router = useRouter();
+    const formRef = useRef(null);
     const [prompt, setPrompt] = useState(creatorPrompt);
-    const [isEditing, setIsEditing] = useState(false);
-    const [errors, setErrors] = useState({});
-
-    // thumbnail upload
-    const [thumbnailUrl, setThumbnailUrl] = useState('');
+    const [thumbnailUrl, setThumbnailUrl] = useState(creatorPrompt?.thumbnail || '');
     const [isUploading, setIsUploading] = useState(false);
 
-    // upload handler (same logic)
     const handleThumbnailUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        if (file.size > 5 * 1024 * 1024) {
-            setErrors(prev => ({ ...prev, thumbnail: "File size exceeds 5MB limit" }));
-            return;
-        }
-
         setIsUploading(true);
-
         const formData = new FormData();
         formData.append('image', file);
 
         try {
-            const IMGBB_API_KEY = process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API;
-
-            const response = await fetch(
-                `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
-                {
-                    method: 'POST',
-                    body: formData
-                }
-            );
-
+            const response = await fetch(`https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API}`, {
+                method: 'POST',
+                body: formData
+            });
             const data = await response.json();
-
             if (data.success) {
                 setThumbnailUrl(data.data.url);
-                setErrors(prev => ({ ...prev, thumbnail: null }));
             } else {
-                setErrors(prev => ({ ...prev, thumbnail: "Upload failed. Try again." }));
+                toast.error("Upload failed");
             }
         } catch (err) {
-            setErrors(prev => ({ ...prev, thumbnail: "Network error during upload" }));
+            toast.error("Network error");
         } finally {
             setIsUploading(false);
         }
     };
 
-    // submit handler
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         const formData = new FormData(e.currentTarget);
 
-        const title = formData.get('title');
-        const description = formData.get('description');
-        const content = formData.get('content');
-        const category = formData.get('category');
-        const aiTool = formData.get('aiTool');
-        const tags = formData.get('tags');
-        const difficulty = formData.get('difficulty');
-        const visibility = formData.get('visibility');
-
-        const newErrors = {};
-
-        if (!title) newErrors.title = "Title is required";
-        if (!content) newErrors.content = "Content is required";
-        if (!category) newErrors.category = "Category is required";
-
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
+        if (!thumbnailUrl) {
+            toast.error("Thumbnail image is required!");
             return;
         }
 
         const newPrompt = {
-            title,
-            description,
-            content,
-            category,
-            aiTool,
-            tags,
-            difficulty,
-            visibility,
-            thumbnail: thumbnailUrl || (prompt?.thumbnail || ''),
+            title: formData.get('title'),
+            category: formData.get('category'),
+            aiTool: formData.get('aiTool'),
+            difficulty: formData.get('difficulty'),
+            visibility: formData.get('visibility'),
+            tags: formData.get('tags'),
+            description: formData.get('description'),
+            content: formData.get('content'),
+            thumbnail: thumbnailUrl,
             copyCount: 0,
             status: 'pending',
             creatorId: creator?.id
         };
 
-        setPrompt(newPrompt);
-
         const payload = await createPrompt(newPrompt);
 
+        // Check if the submission was successful
         if (payload?.insertedId) {
-            const saved = { ...newPrompt, _id: payload.insertedId };
-            setPrompt(saved);
-            toast.success("Prompt submitted for review!");
+            // 1. Show Success Toast
+            toast.success("Prompt submitted for review successfully!");
+
+            // 2. Clear Form Fields
+            formRef.current?.reset();
+
+            // 3. Clear Image State
+            setThumbnailUrl('');
+
+            // 4. Redirect
+            router.push('/dashboard/creator/my-prompts');
+        } else {
+            // Optional: Handle error case if submission fails
+            toast.error("Failed to submit prompt. Please try again.");
         }
-
-        setErrors({});
-        setIsEditing(false);
     };
 
-    const startCreate = () => {
-        setThumbnailUrl('');
-        setIsEditing(true);
-    };
-
-    const startEdit = () => {
-        setThumbnailUrl(prompt?.thumbnail || '');
-        setIsEditing(true);
-    };
-
-    // EMPTY STATE
-    if (!prompt?._id && !isEditing) {
-        return (
-            <div className="max-w-2xl mx-auto my-12 bg-zinc-950 border border-zinc-900 rounded-xl p-8 text-center space-y-6">
-                <div className="w-16 h-16 bg-zinc-900/50 rounded-full flex items-center justify-center mx-auto border border-zinc-800">
-                    <Factory size={24} className="text-zinc-500" />
-                </div>
-
-                <h2 className="text-xl font-semibold text-zinc-200">
-                    No Prompt Created Yet
-                </h2>
-
-                <p className="text-sm text-zinc-500">
-                    Create and submit your first AI prompt to the marketplace.
-                </p>
-
-                <Button
-                    onPress={startCreate}
-                    className="bg-white text-black font-semibold hover:bg-zinc-200 rounded-lg px-6 h-11"
-                >
-                    Add Prompt <ArrowRight size={16} className="ml-1" />
-                </Button>
-            </div>
-        );
-    }
-
-    // VIEW MODE
-    if (prompt && !isEditing) {
-        return (
-            <div className="max-w-4xl mx-auto my-8 bg-zinc-950 border border-zinc-900 rounded-xl p-8 space-y-6">
-
-                <div className="flex justify-between items-start border-b border-zinc-900 pb-6">
-                    <div>
-                        <h1 className="text-2xl font-bold text-white">{prompt.title}</h1>
-                        <p className="text-sm text-zinc-400 mt-1">{prompt.category}</p>
-                    </div>
-
-                    <Button
-                        onPress={startEdit}
-                        variant="bordered"
-                        className="border-zinc-800 text-zinc-300 hover:bg-zinc-900"
-                    >
-                        <Pencil size={14} /> Edit
-                    </Button>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-zinc-300">
-                    <div>AI Tool: {prompt.aiTool}</div>
-                    <div>Difficulty: {prompt.difficulty}</div>
-                    <div>Visibility: {prompt.visibility}</div>
-                </div>
-
-                {prompt.description && (
-                    <p className="text-zinc-300 bg-zinc-900/20 p-4 rounded-xl">
-                        {prompt.description}
-                    </p>
-                )}
-
-                {prompt.content && (
-                    <div className="bg-zinc-900/20 p-4 rounded-xl text-zinc-300 whitespace-pre-wrap">
-                        {prompt.content}
-                    </div>
-                )}
-            </div>
-        );
-    }
-
-    // FORM MODE
     return (
-        <div className="max-w-3xl mx-auto my-8 bg-zinc-950 p-8 border border-zinc-900 rounded-xl">
-
-            <Form onSubmit={handleSubmit} validationErrors={errors} className="space-y-8">
-
+        <div className="max-w-3xl mx-auto my-8 bg-[#FDFCF4] p-8 border border-zinc-200 rounded-xl shadow-sm">
+            <Form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
                 <Fieldset className="space-y-6">
-
-                    <legend className="text-xl font-semibold text-zinc-200 border-b border-zinc-900 pb-3">
-                        {prompt ? 'Update Prompt' : 'Create New Prompt'}
+                    <legend className="text-xl font-semibold text-zinc-900 border-b border-zinc-200 pb-3 w-full">
+                        {prompt ? 'Create New Prompt' : 'Update Prompt'}
+                        {/* Create New Prompt */}
                     </legend>
 
-                    {/* Row 1 */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Thumbnail Upload */}
+                    <div className="flex flex-col gap-2">
+                        <Label className={labelClass}>Thumbnail Image *</Label>
+                        <div className="flex items-center gap-4">
+                            <label className="w-20 h-20 border-2 border-dashed border-red-300 rounded-xl flex items-center justify-center cursor-pointer hover:border-red-500 transition">
+                                <input type="file" hidden onChange={handleThumbnailUpload} accept="image/*" required />
+                                {thumbnailUrl ? (
+                                    <Image
+                                        src={thumbnailUrl}
+                                        alt="Thumbnail"
+                                        width={80}
+                                        height={80}
+                                        className="w-full h-full object-cover rounded-xl"
+                                    />
+                                ) : (
+                                    <ArrowUpToLine size={24} className="text-red-500" />
+                                )}
+                            </label>
+                            <span className="text-xs text-red-400">
+                                {isUploading ? "Uploading..." : "Click to upload *"}
+                            </span>
+                        </div>
+                    </div>
 
-                        <TextField name="title" defaultValue={prompt?.title || ''}>
-                            <Label className="text-zinc-400">Prompt Title</Label>
-                            <Input className={textInputClass} />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <TextField name="title" isRequired>
+                            <Label className={labelClass}>Prompt Title</Label>
+                            <Input className={textInputClass} placeholder='Enter your prompt title' required />
                         </TextField>
 
-                        <Select name="category" className={selectBoxClass}>
-                            <Label className="text-zinc-400">Category</Label>
-                            <Select.Trigger className={triggerClasses}>
-                                <Select.Value />
-                                <Select.Indicator><ChevronDown size={16} /></Select.Indicator>
-                            </Select.Trigger>
+                        <Select name="category" isRequired className="w-full flex flex-col gap-1">
+                            <Label className={labelClass}>Category</Label>
+                            <Select.Trigger className={triggerClasses}><Select.Value /><ChevronDown size={16} /></Select.Trigger>
                             <Select.Popover className={popoverClasses}>
                                 <ListBox>
                                     <ListBox.Item id="writing" className={listItemClasses}>Writing</ListBox.Item>
@@ -244,23 +155,17 @@ export default function AddPromptForm({ creator, creatorPrompt }) {
                                 </ListBox>
                             </Select.Popover>
                         </Select>
-
                     </div>
 
-                    {/* Row 2 */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                        <TextField name="aiTool">
-                            <Label className="text-zinc-400">AI Tool</Label>
-                            <Input className={textInputClass} />
+                        <TextField name="aiTool" isRequired>
+                            <Label className={labelClass}>AI Tool</Label>
+                            <Input className={textInputClass} required />
                         </TextField>
 
-                        <Select name="difficulty" className={selectBoxClass}>
-                            <Label className="text-zinc-400">Difficulty</Label>
-                            <Select.Trigger className={triggerClasses}>
-                                <Select.Value />
-                                <Select.Indicator><ChevronDown size={16} /></Select.Indicator>
-                            </Select.Trigger>
+                        <Select name="difficulty" isRequired className="w-full flex flex-col gap-1">
+                            <Label className={labelClass}>Difficulty</Label>
+                            <Select.Trigger className={triggerClasses}><Select.Value /><ChevronDown size={16} /></Select.Trigger>
                             <Select.Popover className={popoverClasses}>
                                 <ListBox>
                                     <ListBox.Item id="beginner" className={listItemClasses}>Beginner</ListBox.Item>
@@ -269,23 +174,17 @@ export default function AddPromptForm({ creator, creatorPrompt }) {
                                 </ListBox>
                             </Select.Popover>
                         </Select>
-
                     </div>
 
-                    {/* Row 3 */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                        <TextField name="tags">
-                            <Label className="text-zinc-400">Tags</Label>
-                            <Input className={textInputClass} placeholder="comma separated" />
+                        <TextField name="tags" isRequired>
+                            <Label className={labelClass}>Tags</Label>
+                            <Input className={textInputClass} placeholder="comma separated" required />
                         </TextField>
 
-                        <Select name="visibility" className={selectBoxClass}>
-                            <Label className="text-zinc-400">Visibility</Label>
-                            <Select.Trigger className={triggerClasses}>
-                                <Select.Value />
-                                <Select.Indicator><ChevronDown size={16} /></Select.Indicator>
-                            </Select.Trigger>
+                        <Select name="visibility" isRequired className="w-full flex flex-col gap-1">
+                            <Label className={labelClass}>Visibility</Label>
+                            <Select.Trigger className={triggerClasses}><Select.Value /><ChevronDown size={16} /></Select.Trigger>
                             <Select.Popover className={popoverClasses}>
                                 <ListBox>
                                     <ListBox.Item id="public" className={listItemClasses}>Public</ListBox.Item>
@@ -293,59 +192,24 @@ export default function AddPromptForm({ creator, creatorPrompt }) {
                                 </ListBox>
                             </Select.Popover>
                         </Select>
-
                     </div>
 
-                    {/* Thumbnail */}
-                    <div className="flex flex-col gap-1">
-                        <Label className="text-zinc-400">Thumbnail Image</Label>
-                        <div className="flex items-center gap-4">
-                            <label className="w-14 h-14 border border-dashed border-zinc-700 rounded-xl flex items-center justify-center cursor-pointer">
-                                <input type="file" hidden onChange={handleThumbnailUpload} />
-                                {thumbnailUrl ? (
-                                    <img src={thumbnailUrl} className="w-full h-full object-cover rounded-xl" />
-                                ) : (
-                                    <ArrowUpToLine size={18} />
-                                )}
-                            </label>
-                            <span className="text-xs text-zinc-600">
-                                {isUploading ? "Uploading..." : "PNG, JPG up to 5MB"}
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Description */}
-                    <TextField name="description">
-                        <Label className="text-zinc-400">Prompt Description</Label>
-                        <TextArea className={textAreaClass} rows={3} />
+                    <TextField name="description" isRequired>
+                        <Label className={labelClass}>Description</Label>
+                        <TextArea className={textAreaClass} rows={3} required />
                     </TextField>
 
-                    {/* Content */}
-                    <TextField name="content">
-                        <Label className="text-zinc-400">Prompt Content</Label>
-                        <TextArea className={textAreaClass} rows={5} />
+                    <TextField name="content" isRequired>
+                        <Label className={labelClass}>Content</Label>
+                        <TextArea className={textAreaClass} rows={5} required />
                     </TextField>
-
                 </Fieldset>
 
-                <div className="flex justify-end gap-3 border-t border-zinc-900 pt-5">
-
-                    {prompt && (
-                        <Button
-                            type="button"
-                            variant="bordered"
-                            onPress={() => setIsEditing(false)}
-                        >
-                            Cancel
-                        </Button>
-                    )}
-
-                    <Button type="submit" className="bg-white text-black font-semibold">
-                        {prompt ? "Update Prompt" : "Submit Prompt"}
+                <div className="flex justify-end pt-5 border-t border-zinc-200">
+                    <Button type="submit" className="bg-zinc-900 text-white font-semibold px-6 py-2 rounded-lg hover:bg-red-600 transition">
+                        Submit for Review
                     </Button>
-
                 </div>
-
             </Form>
         </div>
     );
