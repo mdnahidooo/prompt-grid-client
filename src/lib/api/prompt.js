@@ -15,3 +15,8 @@ export const getCreatorAllPrompt = async (creatorId) => {
 export const getFeaturedPrompts = async () => {
     return serverFetch("/api/prompts/featured");
 };
+
+
+export const getPromptById = async (id) => {
+    return serverFetch(`/api/prompts/${id}`);
+};
