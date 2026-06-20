@@ -16,7 +16,7 @@ import RejectPromptButton from "./RejectPromptButton";
 
 export default async function AdminPromptsPage() {
     const prompts = await getAdminPrompts();
-    console.log(prompts);
+    // console.log(prompts);
 
     
 
