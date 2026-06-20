@@ -80,7 +80,9 @@ export default function AddPromptForm({ creator, creatorPrompt }) {
             content: formData.get('content'),
             thumbnail: thumbnailUrl,
             copyCount: 0,
+            rejectionReason: null,
             status: 'pending',
+            isFeatured: false,
             creatorId: creator?.id
         };
 
