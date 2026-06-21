@@ -128,7 +128,7 @@ export default function RatingSection({
             <button
                 onClick={handleSubmit}
                 disabled={disabled}
-                className={`px-4 py-1.5 text-xs rounded-lg transition font-medium
+                className={`px-4 py-1.5 text-xs rounded-full transition font-medium
                     ${isBlocked
                         ? "bg-gray-300 text-gray-500"
                         : submitted
@@ -138,7 +138,7 @@ export default function RatingSection({
                 `}
             >
                 {isBlocked
-                    ? "Locked"
+                    ? "Locked Submit"
                     : submitted
                         ? "Rated"
                         : loading

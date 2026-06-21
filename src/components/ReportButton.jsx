@@ -56,7 +56,7 @@ export default function ReportButton({
             <button
                 onClick={() => setOpen(true)}
                 disabled={isBlocked}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm
+                className={`flex items-center gap-2 px-4 py-1 rounded-full text-sm
                     ${isBlocked
                         ? "bg-gray-300 text-gray-500"
                         : "bg-red-100 text-red-600"
@@ -87,7 +87,7 @@ export default function ReportButton({
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => setOpen(false)}
-                                className="px-3 py-1 text-sm bg-gray-200 rounded"
+                                className="px-3 py-1 text-sm bg-gray-200 rounded-full"
                             >
                                 Cancel
                             </button>
@@ -95,7 +95,7 @@ export default function ReportButton({
                             <button
                                 onClick={handleSubmit}
                                 disabled={loading}
-                                className="px-3 py-1 text-sm bg-red-500 text-white rounded"
+                                className="px-3 py-1 text-sm bg-red-500 text-white rounded-full"
                             >
                                 {loading
                                     ? "Sending..."

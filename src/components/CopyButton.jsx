@@ -61,7 +61,7 @@ export default function CopyButton({
         <button
             onClick={handleCopy}
             disabled={disabled}
-            className={`flex items-center gap-2 px-5 py-2 rounded-xl text-white font-medium transition
+            className={`flex items-center gap-2 px-5 py-1 rounded-full text-white font-medium transition
                 ${isBlocked
                     ? "bg-gray-400"
                     : "bg-[#059669] hover:bg-[#047857]"

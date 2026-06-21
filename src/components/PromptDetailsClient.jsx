@@ -99,7 +99,7 @@ export default function PromptDetailsClient({
                             src={imageSrc}
                             alt={prompt.title}
                             fill
-                            className="object-cover"
+                            // className="object-cover"
                         />
 
                         <div className="absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs flex items-center gap-1 shadow-sm">

@@ -77,7 +77,7 @@ export default function BookmarkButton({
         <button
             onClick={handleToggle}
             disabled={loading || isBlocked}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition
+            className={`flex items-center gap-2 px-4 py-1 rounded-full text-sm font-medium transition
                 ${bookmarked
                     ? "bg-yellow-100 text-yellow-700"
                     : "bg-gray-100 text-gray-600"
