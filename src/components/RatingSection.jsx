@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import { toast } from "react-toastify";
+
 import { getPromptRating } from "@/lib/api/rating";
 import { ratePrompt } from "@/lib/actions/rating";
 
@@ -10,29 +11,26 @@ export default function RatingSection({
     promptId,
     user,
     visibility,
-    initialAvg = 0,
-    initialCount = 0,
-    userPreviousRating = 0,
 }) {
-    const [selected, setSelected] = useState(userPreviousRating);
+    const [selected, setSelected] = useState(0);
     const [hovered, setHovered] = useState(0);
 
-    const [avg, setAvg] = useState(initialAvg);
-    const [count, setCount] = useState(initialCount);
+    const [avg, setAvg] = useState(0);
+    const [count, setCount] = useState(0);
 
     const [loading, setLoading] = useState(false);
-    const [submitted, setSubmitted] = useState(
-        !!userPreviousRating
-    );
+    const [submitted, setSubmitted] = useState(false);
 
-    const userPlan = (user?.plan || "free").toLowerCase();
+    const userPlan = user?.plan || "free";
     const isPrivate = visibility === "private";
 
-    // ONLY BLOCK RULE
+    // ❌ ONLY BLOCK CONDITION (SAME STYLE AS BOOKMARK)
     const isBlocked = userPlan === "free" && isPrivate;
 
-    // 🔄 SYNC FROM BACKEND (IMPORTANT FIX)
+    // LOAD RATING
     useEffect(() => {
+        if (!promptId) return;
+
         const load = async () => {
             try {
                 const data = await getPromptRating(promptId);
@@ -40,7 +38,7 @@ export default function RatingSection({
                 setAvg(data.avg || 0);
                 setCount(data.count || 0);
             } catch (err) {
-                console.error("Rating load error:", err);
+                console.error(err);
             }
         };
 
@@ -50,6 +48,7 @@ export default function RatingSection({
     const handleSubmit = async () => {
         if (!user) return toast.error("Login required");
 
+        // 🚨 BLOCK RULE (ONLY FREE + PRIVATE)
         if (isBlocked) {
             return toast.error(
                 "Upgrade to premium to rate private prompts"
@@ -70,18 +69,17 @@ export default function RatingSection({
             const res = await ratePrompt(promptId, {
                 userId: user.id,
                 rating: selected,
+                userPlan: user.plan,
             });
 
-            // 🔥 instant UI sync (no refresh needed)
             setAvg(res.avg || 0);
             setCount(res.count || 0);
 
             setSubmitted(true);
-
             toast.success("Thanks for your rating!");
         } catch (err) {
             console.error(err);
-            toast.error("Rating failed");
+            toast.error("Something went wrong");
         } finally {
             setLoading(false);
         }
@@ -91,21 +89,21 @@ export default function RatingSection({
     const disabled = loading || isBlocked || submitted;
 
     return (
-        <div className="flex flex-col gap-3 mt-6 p-4 bg-white border border-[#E7E1B1] rounded-2xl">
+        <div className="flex flex-col gap-3 p-4 border rounded-xl bg-white">
 
             {/* HEADER */}
-            <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-gray-700">
+            <div className="flex justify-between items-center">
+                <p className="text-sm font-medium">
                     Rate this prompt
                 </p>
 
-                <span className="text-sm text-gray-500">
+                <span className="text-xs text-gray-500">
                     ⭐ {avg.toFixed(1)} / 5 ({count})
                 </span>
             </div>
 
             {/* STARS */}
-            <div className="flex items-center gap-1">
+            <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((num) => (
                     <button
                         key={num}
@@ -113,37 +111,29 @@ export default function RatingSection({
                         onMouseEnter={() => setHovered(num)}
                         onMouseLeave={() => setHovered(0)}
                         onClick={() => setSelected(num)}
-                        className="transition-transform hover:scale-110 disabled:cursor-not-allowed"
                     >
                         <Star
-                            size={22}
-                            className={`transition-colors ${num <= activeValue
+                            size={20}
+                            className={
+                                num <= activeValue
                                     ? "text-yellow-500 fill-yellow-400"
                                     : "text-gray-300"
-                                }`}
+                            }
                         />
                     </button>
                 ))}
             </div>
 
-            {/* PREVIEW */}
-            {selected > 0 && !submitted && (
-                <p className="text-xs text-gray-500">
-                    You selected {selected} star
-                    {selected > 1 ? "s" : ""}
-                </p>
-            )}
-
             {/* BUTTON */}
             <button
                 onClick={handleSubmit}
                 disabled={disabled}
-                className={`w-fit px-5 py-1.5 rounded-full text-xs font-semibold transition
+                className={`px-4 py-1.5 text-xs rounded-lg transition font-medium
                     ${isBlocked
                         ? "bg-gray-300 text-gray-500"
                         : submitted
                             ? "bg-gray-200 text-gray-500"
-                            : "bg-[#059669] text-white hover:bg-[#047857]"
+                            : "bg-green-600 text-white hover:bg-green-700"
                     }
                 `}
             >

@@ -1,5 +1,5 @@
 import PromptDetailsClient from "@/components/PromptDetailsClient";
-import RatingSection from "@/components/RatingSection";
+// import RatingSection from "@/components/RatingSection";
 import { getPromptById } from "@/lib/api/prompt";
 import { getUserSession } from "@/lib/core/session";
 import { notFound } from "next/navigation";
@@ -31,13 +31,13 @@ export default async function PromptDetailsPage({ params }) {
                 fullAccess={fullAccess}
             />
 
-            <RatingSection
+            {/* <RatingSection
                 promptId={prompt._id}
                 initialAvg={prompt.ratingAvg || 0}
                 initialCount={prompt.ratingCount || 0}
                 user={user}
-                disabled={!fullAccess}
-            />
+                disabled={fullAccess}
+            /> */}
         </div>
     );
 }

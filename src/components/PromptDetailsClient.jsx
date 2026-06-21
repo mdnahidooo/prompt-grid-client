@@ -18,6 +18,7 @@ import { incrementCopyCount } from "@/lib/actions/prompt";
 import BookmarkButton from "./BookmarkButton";
 import CopyButton from "./CopyButton";
 import ReportButton from "./ReportButton";
+import RatingSection from "./RatingSection";
 
 export default function PromptDetailsClient({
     prompt,
@@ -87,11 +88,11 @@ export default function PromptDetailsClient({
     return (
         <div className="max-w-6xl mx-auto p-6 space-y-6">
 
-            {/* GRID */}
+            {/* TOP GRID */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 {/* LEFT CARD */}
-                <div className="bg-white border rounded-xl overflow-hidden">
+                <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
 
                     <div className="relative h-52">
                         <Image
@@ -101,15 +102,15 @@ export default function PromptDetailsClient({
                             className="object-cover"
                         />
 
-                        <div className="absolute top-3 left-3 bg-white px-3 py-1 rounded-full text-xs flex items-center gap-2">
+                        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs flex items-center gap-1 shadow-sm">
                             {isPrivate ? (
                                 <>
-                                    <Lock size={14} />
+                                    <Lock size={13} />
                                     Private
                                 </>
                             ) : (
                                 <>
-                                    <Globe size={14} />
+                                    <Globe size={13} />
                                     Public
                                 </>
                             )}
@@ -117,7 +118,7 @@ export default function PromptDetailsClient({
                     </div>
 
                     <div className="p-4 space-y-2">
-                        <h1 className="font-bold text-lg">
+                        <h1 className="font-bold text-lg text-gray-900">
                             {prompt.title}
                         </h1>
 
@@ -125,14 +126,27 @@ export default function PromptDetailsClient({
                             {prompt.description}
                         </p>
 
-                        <div className="flex gap-2 flex-wrap text-xs">
-                            <span className="bg-gray-100 px-2 py-1 rounded flex items-center gap-1">
+                        <div className="flex gap-2 flex-wrap text-xs mt-2">
+                            <span className="bg-gray-100 px-2 py-1 rounded-full flex items-center gap-1">
                                 <Tag size={12} />
                                 {prompt.category}
                             </span>
 
-                            <span className="bg-gray-100 px-2 py-1 rounded">
+                            <span className="bg-gray-100 px-2 py-1 rounded-full">
                                 {prompt.aiTool}
+                            </span>
+
+                            <span className="bg-gray-100 px-2 py-1 rounded-full">
+                                {prompt.difficulty}
+                            </span>
+
+                            <span className={`px-2 py-1 rounded-full text-xs ${prompt.status === "approved"
+                                ? "bg-green-100 text-green-700"
+                                : prompt.status === "rejected"
+                                    ? "bg-red-100 text-red-600"
+                                    : "bg-yellow-100 text-yellow-700"
+                                }`}>
+                                {prompt.status}
                             </span>
                         </div>
                     </div>
@@ -141,14 +155,16 @@ export default function PromptDetailsClient({
                 {/* RIGHT SIDE */}
                 <div className="lg:col-span-2 space-y-4">
 
-                    {/* CREATOR */}
-                    <div className="bg-white border rounded-xl p-4 flex justify-between items-center">
+                    {/* CREATOR CARD */}
+                    <div className="bg-white border border-gray-200 rounded-2xl p-4 flex justify-between items-center">
 
                         <div className="flex gap-3 items-center">
-                            <User />
+                            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                                <User size={18} />
+                            </div>
 
                             <div>
-                                <p className="font-semibold">
+                                <p className="font-semibold text-gray-900">
                                     {prompt.creator?.name}
                                 </p>
                                 <p className="text-xs text-gray-500">
@@ -158,9 +174,11 @@ export default function PromptDetailsClient({
                         </div>
 
                         <div className="text-right">
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1 justify-end">
                                 <Star size={14} className="text-yellow-500" />
-                                {prompt.ratingAvg?.toFixed?.(1) || "0.0"}
+                                <span className="font-semibold">
+                                    {prompt.ratingAvg?.toFixed?.(1) || "0.0"}
+                                </span>
                             </div>
                             <p className="text-xs text-gray-500">
                                 {prompt.ratingCount || 0} reviews
@@ -169,130 +187,100 @@ export default function PromptDetailsClient({
                     </div>
 
                     {/* CONTENT */}
-                    <div className="bg-white border rounded-xl p-4">
+                    <div className="bg-white border border-gray-200 rounded-2xl p-5">
 
-                        <div className="flex justify-between mb-2">
-                            <h2 className="flex items-center gap-2 font-semibold">
+                        <div className="flex justify-between mb-3 items-center">
+                            <h2 className="flex items-center gap-2 font-semibold text-gray-900">
                                 <BarChart3 size={16} />
                                 Prompt Content
                             </h2>
 
                             {isLocked && (
-                                <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded flex items-center gap-1">
+                                <span className="text-xs bg-orange-100 text-orange-600 px-3 py-1 rounded-full flex items-center gap-1">
                                     <Lock size={12} />
                                     Premium Locked
                                 </span>
                             )}
                         </div>
 
-                        <div className={`whitespace-pre-wrap text-sm ${isLocked ? "blur-sm select-none" : ""}`}>
+                        <div className={`whitespace-pre-wrap text-sm leading-relaxed text-gray-700 ${isLocked ? "blur-sm select-none" : ""
+                            }`}>
                             {prompt.content}
                         </div>
                     </div>
 
-                    {/* ACTIONS */}
-                    <div className="bg-white border rounded-xl p-4 flex justify-between items-center">
+                    {/* METADATA SECTION (NEW CLEAN BLOCK) */}
+                    <div className="bg-white border border-gray-200 rounded-2xl p-5 grid grid-cols-2 gap-4 text-sm">
 
-                        {/* COPY */}
+                        <div>
+                            <p className="text-gray-500 text-xs">Tags</p>
+                            <p className="font-medium">{prompt.tags}</p>
+                        </div>
+
+                        <div>
+                            <p className="text-gray-500 text-xs">Visibility</p>
+                            <p className="font-medium">{prompt.visibility}</p>
+                        </div>
+
+                        <div>
+                            <p className="text-gray-500 text-xs">Copy Count</p>
+                            <p className="font-medium">{prompt.copyCount}</p>
+                        </div>
+
+                        <div>
+                            <p className="text-gray-500 text-xs">Created At</p>
+                            <p className="font-medium">
+                                {new Date(prompt.createdAt).toLocaleDateString()}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* ACTIONS */}
+                    <div className="bg-white border border-gray-200 rounded-2xl p-4 flex justify-between items-center">
+
+                        {/* COPY COUNT */}
                         <div className="text-sm text-gray-600">
                             Copy Count:{" "}
-                            <span className="font-bold text-black">
+                            <span className="font-semibold text-gray-900">
                                 {prompt.copyCount || 0}
                             </span>
                         </div>
 
-                        <div className="flex gap-2">
+                        {/* ACTION BUTTONS */}
+                        <div className="flex gap-2 flex-wrap">
 
-                            {/* BOOKMARK */}
-                            {/* <button
-                                onClick={handleBookmark}
-                                disabled={isLocked}
-                                className={`px-3 py-1 rounded text-xs flex items-center gap-1
-                                    ${isLocked
-                                        ? "bg-gray-300 text-gray-500"
-                                        : "bg-blue-600 text-white"
-                                    }`}
-                            >
-                                <Bookmark size={14} />
-                                {bookmarked ? "Saved" : "Save"}
-                            </button> */}
+                            <CopyButton
+                                promptId={prompt._id}
+                                user={user}
+                                visibility={prompt.visibility}
+                                content={prompt.content}
+                            />
 
-                            {/* <div className="flex gap-3">
-                                <BookmarkButton promptId={prompt._id} user={user} visibility={prompt.visibility} />
-                            </div> */}
+                            <BookmarkButton
+                                promptId={prompt._id}
+                                user={user}
+                                visibility={prompt.visibility}
+                            />
 
-                            {/* <div className="flex gap-3">
-                                <CopyButton
-                                    promptId={prompt._id}
-                                    user={user}
-                                    visibility={prompt.visibility}
-                                    content={prompt.content}
-                                />
-
-                                <BookmarkButton
-                                    promptId={prompt._id}
-                                    user={user}
-                                    visibility={prompt.visibility}
-                                />
-                            </div> */}
-
-
-                            <div className="flex gap-3">
-                                <CopyButton
-                                    promptId={prompt._id}
-                                    user={user}
-                                    visibility={prompt.visibility}
-                                    content={prompt.content}
-                                />
-
-                                <BookmarkButton
-                                    promptId={prompt._id}
-                                    user={user}
-                                    visibility={prompt.visibility}
-                                />
-
-                                <ReportButton
-                                    promptId={prompt._id}
-                                    user={user}
-                                    visibility={prompt.visibility}
-                                />
-                            </div>
-
-                            {/* REPORT */}
-                            {/* <button
-                                onClick={handleReport}
-                                disabled={isLocked}
-                                className={`px-3 py-1 rounded text-xs flex items-center gap-1
-                                    ${isLocked
-                                        ? "bg-gray-300 text-gray-500"
-                                        : "bg-red-500 text-white"
-                                    }`}
-                            >
-                                <Flag size={14} />
-                                Report
-                            </button> */}
-
-                            {/* COPY */}
-                            {/* <button
-                                onClick={handleCopy}
-                                disabled={isLocked}
-                                className={`px-3 py-1 rounded text-xs flex items-center gap-1
-                                    ${isLocked
-                                        ? "bg-gray-400"
-                                        : "bg-green-600 hover:bg-green-700 text-white"
-                                    }`}
-                            >
-                                <Copy size={14} />
-                                {copied ? "Copied" : "Copy"}
-                            </button> */}
-
-
-
+                            <ReportButton
+                                promptId={prompt._id}
+                                user={user}
+                                visibility={prompt.visibility}
+                            />
                         </div>
-
                     </div>
 
                 </div>
+            </div>
+
+            <div>
+                <RatingSection
+                    promptId={prompt._id}
+                    initialAvg={prompt.ratingAvg || 0}
+                    initialCount={prompt.ratingCount || 0}
+                    user={user}
+                    visibility={prompt.visibility}
+                />
             </div>
         </div>
     );
