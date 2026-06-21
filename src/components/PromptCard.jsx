@@ -39,8 +39,7 @@ export default function PromptCard({ prompt, creator, user }) {
                                 src={prompt.thumbnail}
                                 alt={prompt.title}
                                 fill
-                                className={`object-cover ${isPrivate ? "blur-[2px]" : ""
-                                    }`}
+                                className={`object-cover ${isPrivate ? "blur-[2px]" : ""}`}
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center text-xs text-gray-500">
@@ -111,12 +110,20 @@ export default function PromptCard({ prompt, creator, user }) {
 
                     </div>
 
-                    {/* COPY COUNT */}
-                    <div className="text-right text-[11px] text-gray-600">
+                    {/* COPY + RATING (FIXED HERE) */}
+                    <div className="text-right text-[11px] text-gray-600 space-y-1">
+
                         <div className="flex items-center gap-1 justify-end">
                             <Copy size={12} />
                             {prompt.copyCount || 0}
                         </div>
+
+                        {/* ⭐ ADDED RATING */}
+                        <div className="flex items-center gap-1 justify-end text-yellow-600">
+                            <Star size={12} className="fill-yellow-500" />
+                            {Number(prompt.ratingAvg || 0).toFixed(1)}
+                        </div>
+
                     </div>
 
                 </div>
@@ -140,9 +147,9 @@ export default function PromptCard({ prompt, creator, user }) {
                     )}
                 </div>
 
-                {/* BUTTON */}
+                {/* VIEW BUTTON FIXED */}
                 <Link
-                    href={user ? `/prompts/${prompt._id}` : "/auth/signin"}
+                    href={`/prompts/${prompt._id}`}
                 >
                     <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#059669] text-white text-[11px] font-medium hover:bg-[#047857] transition">
                         <Eye size={12} />
