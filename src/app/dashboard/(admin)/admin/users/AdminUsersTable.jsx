@@ -51,12 +51,11 @@ export default function AdminUsersTable({ users = [] }) {
                                 <td className="p-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 border">
+                                            
                                             {user.image ? (
-                                                <Image
-                                                    src={user.image}
-                                                    alt={user.name}
-                                                    width={40}
-                                                    height={40}
+                                                <img
+                                                    src={user?.image}
+                                                    alt={user?.name}
                                                     className="w-full h-full object-cover"
                                                 />
                                             ) : (

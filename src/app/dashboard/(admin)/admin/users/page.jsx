@@ -3,6 +3,7 @@ import { getAdminUsers } from "@/lib/api/admin/users";
 
 export default async function AdminUsersPage() {
     const users = await getAdminUsers();
+    // console.log(users);
 
     return (
         <div className="max-w-7xl mx-auto p-6">
