@@ -10,9 +10,13 @@ export default function GlobalFooter() {
     const { data: session, isPending } = authClient.useSession();
     const user = session?.user;
 
+    if (pathname.includes('dashboard')) {
+        return null;
+    }
     if (pathname.includes('auth')) {
         return null;
     }
+    
     return (
         <footer className="bg-[#E7E1B1]/40 border-t border-[#306D29]/10 text-black mt-auto select-none py-10 pb-10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">

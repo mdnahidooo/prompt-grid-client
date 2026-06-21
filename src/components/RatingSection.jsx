@@ -1,28 +1,68 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
-import { ratePrompt } from "@/lib/api/rating";
 import { toast } from "react-toastify";
+import { getPromptRating } from "@/lib/api/rating";
+import { ratePrompt } from "@/lib/actions/rating";
 
 export default function RatingSection({
     promptId,
-    initialAvg = 0,
     user,
+    visibility,
+    initialAvg = 0,
+    initialCount = 0,
     userPreviousRating = 0,
 }) {
     const [selected, setSelected] = useState(userPreviousRating);
     const [hovered, setHovered] = useState(0);
+
     const [avg, setAvg] = useState(initialAvg);
+    const [count, setCount] = useState(initialCount);
+
     const [loading, setLoading] = useState(false);
-    const [submitted, setSubmitted] = useState(!!userPreviousRating);
+    const [submitted, setSubmitted] = useState(
+        !!userPreviousRating
+    );
+
+    const userPlan = (user?.plan || "free").toLowerCase();
+    const isPrivate = visibility === "private";
+
+    // ONLY BLOCK RULE
+    const isBlocked = userPlan === "free" && isPrivate;
+
+    // 🔄 SYNC FROM BACKEND (IMPORTANT FIX)
+    useEffect(() => {
+        const load = async () => {
+            try {
+                const data = await getPromptRating(promptId);
+
+                setAvg(data.avg || 0);
+                setCount(data.count || 0);
+            } catch (err) {
+                console.error("Rating load error:", err);
+            }
+        };
+
+        load();
+    }, [promptId]);
 
     const handleSubmit = async () => {
         if (!user) return toast.error("Login required");
 
-        if (submitted) return toast.error("Already rated");
+        if (isBlocked) {
+            return toast.error(
+                "Upgrade to premium to rate private prompts"
+            );
+        }
 
-        if (!selected) return toast.error("Select rating first");
+        if (submitted) {
+            return toast.error("You already rated this prompt");
+        }
+
+        if (!selected) {
+            return toast.error("Select rating first");
+        }
 
         try {
             setLoading(true);
@@ -32,21 +72,26 @@ export default function RatingSection({
                 rating: selected,
             });
 
-            setAvg(res.avg);
+            // 🔥 instant UI sync (no refresh needed)
+            setAvg(res.avg || 0);
+            setCount(res.count || 0);
+
             setSubmitted(true);
 
-            toast.success("Thanks for rating!");
-        } catch {
-            toast.error("Failed to submit rating");
+            toast.success("Thanks for your rating!");
+        } catch (err) {
+            console.error(err);
+            toast.error("Rating failed");
         } finally {
             setLoading(false);
         }
     };
 
     const activeValue = hovered || selected;
+    const disabled = loading || isBlocked || submitted;
 
     return (
-        <div className="flex flex-col gap-3 mt-6">
+        <div className="flex flex-col gap-3 mt-6 p-4 bg-white border border-[#E7E1B1] rounded-2xl">
 
             {/* HEADER */}
             <div className="flex items-center justify-between">
@@ -55,7 +100,7 @@ export default function RatingSection({
                 </p>
 
                 <span className="text-sm text-gray-500">
-                    ⭐ {avg.toFixed(1)} / 5
+                    ⭐ {avg.toFixed(1)} / 5 ({count})
                 </span>
             </div>
 
@@ -64,7 +109,7 @@ export default function RatingSection({
                 {[1, 2, 3, 4, 5].map((num) => (
                     <button
                         key={num}
-                        disabled={submitted}
+                        disabled={disabled}
                         onMouseEnter={() => setHovered(num)}
                         onMouseLeave={() => setHovered(0)}
                         onClick={() => setSelected(num)}
@@ -81,31 +126,34 @@ export default function RatingSection({
                 ))}
             </div>
 
-            {/* SMALL PREVIEW TEXT */}
+            {/* PREVIEW */}
             {selected > 0 && !submitted && (
                 <p className="text-xs text-gray-500">
-                    You selected {selected} star{selected > 1 ? "s" : ""}
+                    You selected {selected} star
+                    {selected > 1 ? "s" : ""}
                 </p>
             )}
 
-            {/* PILL BUTTON (NEW DESIGN) */}
+            {/* BUTTON */}
             <button
                 onClick={handleSubmit}
-                disabled={loading || submitted}
-                className={`
-                    w-fit px-5 py-1.5 rounded-full text-xs font-semibold
-                    transition-all duration-200
-                    ${submitted
-                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                        : "bg-[#059669] text-white hover:bg-[#047857]"
+                disabled={disabled}
+                className={`w-fit px-5 py-1.5 rounded-full text-xs font-semibold transition
+                    ${isBlocked
+                        ? "bg-gray-300 text-gray-500"
+                        : submitted
+                            ? "bg-gray-200 text-gray-500"
+                            : "bg-[#059669] text-white hover:bg-[#047857]"
                     }
                 `}
             >
-                {submitted
-                    ? "Rated"
-                    : loading
-                        ? "Submitting..."
-                        : "Submit Rating"}
+                {isBlocked
+                    ? "Locked"
+                    : submitted
+                        ? "Rated"
+                        : loading
+                            ? "Submitting..."
+                            : "Submit Rating"}
             </button>
         </div>
     );

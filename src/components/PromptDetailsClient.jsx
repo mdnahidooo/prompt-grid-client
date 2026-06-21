@@ -7,15 +7,25 @@ import {
     Globe,
     Star,
     User,
-    Eye,
     Tag,
-    BarChart3
+    BarChart3,
+    Bookmark,
+    Flag
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { incrementCopyCount } from "@/lib/actions/prompt";
+import BookmarkButton from "./BookmarkButton";
+import CopyButton from "./CopyButton";
+import ReportButton from "./ReportButton";
 
-export default function PromptDetailsClient({ prompt }) {
+export default function PromptDetailsClient({
+    prompt,
+    user,
+    fullAccess = false
+}) {
     const [copied, setCopied] = useState(false);
+    const [bookmarked, setBookmarked] = useState(false);
 
     if (!prompt) {
         return (
@@ -26,20 +36,24 @@ export default function PromptDetailsClient({ prompt }) {
     }
 
     const isPrivate = prompt.visibility === "private";
+    const isLocked = isPrivate && !fullAccess;
 
-    const imageSrc =
-        prompt.thumbnail?.trim()
-            ? prompt.thumbnail
-            : "/placeholder.png";
+    const imageSrc = prompt.thumbnail?.trim()
+        ? prompt.thumbnail
+        : "/placeholder.png";
 
+    // ---------------- COPY ----------------
     const handleCopy = async () => {
-        if (isPrivate) {
-            toast.error("This is a private prompt");
+        if (isLocked) {
+            toast.error("Premium required to copy this prompt");
             return;
         }
 
         try {
             await navigator.clipboard.writeText(prompt.content || "");
+
+            await incrementCopyCount(prompt._id);
+
             setCopied(true);
             toast.success("Copied!");
 
@@ -49,151 +63,232 @@ export default function PromptDetailsClient({ prompt }) {
         }
     };
 
-    return (
-        <div className="max-w-6xl mx-auto p-6">
+    // ---------------- BOOKMARK (UI ONLY NOW) ----------------
+    const handleBookmark = () => {
+        if (isLocked) {
+            toast.error("Premium required to bookmark");
+            return;
+        }
 
-            {/* TOP GRID */}
+        setBookmarked(!bookmarked);
+        toast.success(bookmarked ? "Removed bookmark" : "Bookmarked");
+    };
+
+    // ---------------- REPORT (UI ONLY NOW) ----------------
+    const handleReport = () => {
+        if (isLocked) {
+            toast.error("Premium required to report");
+            return;
+        }
+
+        toast.success("Reported successfully");
+    };
+
+    return (
+        <div className="max-w-6xl mx-auto p-6 space-y-6">
+
+            {/* GRID */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                {/* LEFT IMAGE CARD */}
-                <div className="lg:col-span-1 bg-white border border-[#E7E1B1] rounded-2xl overflow-hidden shadow-sm">
+                {/* LEFT CARD */}
+                <div className="bg-white border rounded-xl overflow-hidden">
 
-                    <div className="relative w-full h-52 bg-[#FBF5DD]">
-
+                    <div className="relative h-52">
                         <Image
                             src={imageSrc}
-                            alt={prompt.title || "Prompt"}
+                            alt={prompt.title}
                             fill
                             className="object-cover"
                         />
 
-                        {/* visibility badge */}
-                        <div className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 text-xs font-semibold">
-
-                            {prompt.visibility === "public" ? (
+                        <div className="absolute top-3 left-3 bg-white px-3 py-1 rounded-full text-xs flex items-center gap-2">
+                            {isPrivate ? (
                                 <>
-                                    <Globe size={14} className="text-green-600" />
-                                    Public
+                                    <Lock size={14} />
+                                    Private
                                 </>
                             ) : (
                                 <>
-                                    <Lock size={14} className="text-orange-500" />
-                                    Private
+                                    <Globe size={14} />
+                                    Public
                                 </>
                             )}
-
                         </div>
-
                     </div>
 
-                    {/* QUICK INFO */}
-                    <div className="p-4 space-y-3">
-
-                        <h1 className="text-lg font-bold text-[#212121]">
+                    <div className="p-4 space-y-2">
+                        <h1 className="font-bold text-lg">
                             {prompt.title}
                         </h1>
 
-                        <p className="text-sm text-gray-600 line-clamp-3">
+                        <p className="text-sm text-gray-600 line-clamp-2">
                             {prompt.description}
                         </p>
 
-                        <div className="flex flex-wrap gap-2 text-xs">
-
-                            <span className="px-2 py-1 bg-[#FBF5DD] text-[#059669] rounded-full flex items-center gap-1">
+                        <div className="flex gap-2 flex-wrap text-xs">
+                            <span className="bg-gray-100 px-2 py-1 rounded flex items-center gap-1">
                                 <Tag size={12} />
                                 {prompt.category}
                             </span>
 
-                            <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                            <span className="bg-gray-100 px-2 py-1 rounded">
                                 {prompt.aiTool}
                             </span>
-
                         </div>
-
                     </div>
                 </div>
 
-                {/* RIGHT CONTENT */}
-                <div className="lg:col-span-2 space-y-6">
+                {/* RIGHT SIDE */}
+                <div className="lg:col-span-2 space-y-4">
 
-                    {/* CREATOR CARD */}
-                    <div className="bg-white border border-[#E7E1B1] rounded-2xl p-4 flex items-center justify-between">
+                    {/* CREATOR */}
+                    <div className="bg-white border rounded-xl p-4 flex justify-between items-center">
 
-                        <div className="flex items-center gap-3">
-
-                            <div className="w-12 h-12 rounded-full bg-[#FBF5DD] flex items-center justify-center border border-[#E7E1B1]">
-                                <User className="text-[#059669]" />
-                            </div>
+                        <div className="flex gap-3 items-center">
+                            <User />
 
                             <div>
                                 <p className="font-semibold">
-                                    {prompt.creator?.name || "Unknown Creator"}
+                                    {prompt.creator?.name}
                                 </p>
                                 <p className="text-xs text-gray-500">
-                                    {prompt.creator?.email || "No email"}
+                                    {prompt.creator?.email}
                                 </p>
                             </div>
-
                         </div>
 
                         <div className="text-right">
-                            <p className="text-sm font-semibold flex items-center gap-1 justify-end">
+                            <div className="flex items-center gap-1">
                                 <Star size={14} className="text-yellow-500" />
-                                4.5
-                            </p>
+                                {prompt.ratingAvg?.toFixed?.(1) || "0.0"}
+                            </div>
                             <p className="text-xs text-gray-500">
-                                Rating
+                                {prompt.ratingCount || 0} reviews
                             </p>
                         </div>
-
                     </div>
 
-                    {/* CONTENT BOX (LOCKED IF PRIVATE) */}
-                    <div className="bg-white border border-[#E7E1B1] rounded-2xl p-5">
+                    {/* CONTENT */}
+                    <div className="bg-white border rounded-xl p-4">
 
-                        <div className="flex items-center justify-between mb-3">
-
-                            <h2 className="font-semibold flex items-center gap-2">
+                        <div className="flex justify-between mb-2">
+                            <h2 className="flex items-center gap-2 font-semibold">
                                 <BarChart3 size={16} />
                                 Prompt Content
                             </h2>
 
-                            {isPrivate && (
-                                <span className="text-xs px-3 py-1 rounded-full bg-orange-100 text-orange-600 flex items-center gap-1">
+                            {isLocked && (
+                                <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded flex items-center gap-1">
                                     <Lock size={12} />
-                                    Locked (Premium)
+                                    Premium Locked
                                 </span>
                             )}
-
                         </div>
 
-                        <div className={`text-sm leading-relaxed whitespace-pre-wrap ${isPrivate ? "blur-sm select-none" : ""}`}>
-                            {prompt.content || "No content available"}
+                        <div className={`whitespace-pre-wrap text-sm ${isLocked ? "blur-sm select-none" : ""}`}>
+                            {prompt.content}
                         </div>
-
                     </div>
 
-                    {/* STATS + COPY */}
-                    <div className="bg-white border border-[#E7E1B1] rounded-2xl p-4 flex items-center justify-between">
+                    {/* ACTIONS */}
+                    <div className="bg-white border rounded-xl p-4 flex justify-between items-center">
 
+                        {/* COPY */}
                         <div className="text-sm text-gray-600">
                             Copy Count:{" "}
-                            <span className="font-semibold text-black">
+                            <span className="font-bold text-black">
                                 {prompt.copyCount || 0}
                             </span>
                         </div>
 
-                        <button
-                            onClick={handleCopy}
-                            className={`flex items-center gap-2 px-5 py-2 rounded-xl text-white font-medium transition
-                                ${isPrivate
-                                    ? "bg-gray-400 cursor-not-allowed"
-                                    : "bg-[#059669] hover:bg-[#047857]"
-                                }`}
-                        >
-                            <Copy size={14} />
-                            {copied ? "Copied!" : "Copy"}
-                        </button>
+                        <div className="flex gap-2">
+
+                            {/* BOOKMARK */}
+                            {/* <button
+                                onClick={handleBookmark}
+                                disabled={isLocked}
+                                className={`px-3 py-1 rounded text-xs flex items-center gap-1
+                                    ${isLocked
+                                        ? "bg-gray-300 text-gray-500"
+                                        : "bg-blue-600 text-white"
+                                    }`}
+                            >
+                                <Bookmark size={14} />
+                                {bookmarked ? "Saved" : "Save"}
+                            </button> */}
+
+                            {/* <div className="flex gap-3">
+                                <BookmarkButton promptId={prompt._id} user={user} visibility={prompt.visibility} />
+                            </div> */}
+
+                            {/* <div className="flex gap-3">
+                                <CopyButton
+                                    promptId={prompt._id}
+                                    user={user}
+                                    visibility={prompt.visibility}
+                                    content={prompt.content}
+                                />
+
+                                <BookmarkButton
+                                    promptId={prompt._id}
+                                    user={user}
+                                    visibility={prompt.visibility}
+                                />
+                            </div> */}
+
+
+                            <div className="flex gap-3">
+                                <CopyButton
+                                    promptId={prompt._id}
+                                    user={user}
+                                    visibility={prompt.visibility}
+                                    content={prompt.content}
+                                />
+
+                                <BookmarkButton
+                                    promptId={prompt._id}
+                                    user={user}
+                                    visibility={prompt.visibility}
+                                />
+
+                                <ReportButton
+                                    promptId={prompt._id}
+                                    user={user}
+                                    visibility={prompt.visibility}
+                                />
+                            </div>
+
+                            {/* REPORT */}
+                            {/* <button
+                                onClick={handleReport}
+                                disabled={isLocked}
+                                className={`px-3 py-1 rounded text-xs flex items-center gap-1
+                                    ${isLocked
+                                        ? "bg-gray-300 text-gray-500"
+                                        : "bg-red-500 text-white"
+                                    }`}
+                            >
+                                <Flag size={14} />
+                                Report
+                            </button> */}
+
+                            {/* COPY */}
+                            {/* <button
+                                onClick={handleCopy}
+                                disabled={isLocked}
+                                className={`px-3 py-1 rounded text-xs flex items-center gap-1
+                                    ${isLocked
+                                        ? "bg-gray-400"
+                                        : "bg-green-600 hover:bg-green-700 text-white"
+                                    }`}
+                            >
+                                <Copy size={14} />
+                                {copied ? "Copied" : "Copy"}
+                            </button> */}
+
+
+
+                        </div>
 
                     </div>
 

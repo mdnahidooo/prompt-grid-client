@@ -23,3 +23,16 @@ export const deletePrompt = async (id) => {
 
     return result;
 };
+
+export const incrementCopyCount = async (id) => {
+    const result = await serverMutation(
+        `/api/prompts/${id}/copy`,
+        {},
+        "PATCH"
+    );
+
+    // optional: if you show copy count in dashboard or details cache
+    revalidatePath(`/prompts`);
+
+    return result;
+};
