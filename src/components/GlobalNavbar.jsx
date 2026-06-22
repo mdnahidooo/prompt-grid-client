@@ -28,9 +28,9 @@ export default function GlobalNavbar() {
     if (pathname.includes('dashboard')) {
         return null;
     }
-    if (pathname.includes('auth')) {
-        return null;
-    }
+    // if (pathname.includes('auth')) {
+    //     return null;
+    // }
 
     const handleLogout = async () => {
         await authClient.signOut({

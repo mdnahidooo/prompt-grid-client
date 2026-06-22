@@ -15,6 +15,8 @@ export default function RatingSection({
     const [selected, setSelected] = useState(0);
     const [hovered, setHovered] = useState(0);
 
+    const [review, setReview] = useState("");
+
     const [avg, setAvg] = useState(0);
     const [count, setCount] = useState(0);
 
@@ -24,7 +26,7 @@ export default function RatingSection({
     const userPlan = user?.plan || "free";
     const isPrivate = visibility === "private";
 
-    // ❌ ONLY BLOCK CONDITION (SAME STYLE AS BOOKMARK)
+    // ONLY BLOCK RULE (FREE + PRIVATE)
     const isBlocked = userPlan === "free" && isPrivate;
 
     // LOAD RATING
@@ -48,7 +50,6 @@ export default function RatingSection({
     const handleSubmit = async () => {
         if (!user) return toast.error("Login required");
 
-        // 🚨 BLOCK RULE (ONLY FREE + PRIVATE)
         if (isBlocked) {
             return toast.error(
                 "Upgrade to premium to rate private prompts"
@@ -68,7 +69,12 @@ export default function RatingSection({
 
             const res = await ratePrompt(promptId, {
                 userId: user.id,
+                userName: user.name,
+                userImage: user.image,
+
                 rating: selected,
+                review,
+
                 userPlan: user.plan,
             });
 
@@ -123,6 +129,17 @@ export default function RatingSection({
                     </button>
                 ))}
             </div>
+
+            {/* REVIEW INPUT (NEW ADD) */}
+            {!submitted && (
+                <textarea
+                    value={review}
+                    onChange={(e) => setReview(e.target.value)}
+                    disabled={disabled}
+                    placeholder="Write your review (optional)..."
+                    className="w-full text-xs border rounded-lg p-2 min-h-17.5 resize-none focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+            )}
 
             {/* BUTTON */}
             <button

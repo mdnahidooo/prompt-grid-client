@@ -3,14 +3,15 @@
 import { useState } from "react";
 import { Copy } from "lucide-react";
 import { toast } from "react-toastify";
+import { incrementCopyCount } from "@/lib/actions/copied-prompts";
 
-import { incrementCopyCount } from "@/lib/actions/prompt";
 
 export default function CopyButton({
     promptId,
     user,
     visibility,
     content,
+    title
 }) {
     const [loading, setLoading] = useState(false);
     const [copied, setCopied] = useState(false);
@@ -42,7 +43,11 @@ export default function CopyButton({
             setCopied(true);
 
             // increment backend copy count
-            await incrementCopyCount(promptId);
+            await incrementCopyCount(promptId, {
+                userId: user.id,
+                content,
+                title
+            });
 
             toast.success("Copied!");
 

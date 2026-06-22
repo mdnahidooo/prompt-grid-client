@@ -14,11 +14,11 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { incrementCopyCount } from "@/lib/actions/prompt";
 import BookmarkButton from "./BookmarkButton";
 import CopyButton from "./CopyButton";
 import ReportButton from "./ReportButton";
 import RatingSection from "./RatingSection";
+import { incrementCopyCount } from "@/lib/actions/copied-prompts";
 
 export default function PromptDetailsClient({
     prompt,
@@ -254,6 +254,7 @@ export default function PromptDetailsClient({
                                 user={user}
                                 visibility={prompt.visibility}
                                 content={prompt.content}
+                                title={prompt.title}
                             />
 
                             <BookmarkButton
