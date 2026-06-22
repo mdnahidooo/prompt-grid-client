@@ -35,6 +35,7 @@ export default async function DashboardLayout({ children }) {
             { label: "My Prompts", path: "/dashboard/user/my-prompts", icon: "FileText" },
             { label: "Saved Bookmarks", path: "/dashboard/user/bookmarks", icon: "Bookmark" },
             { label: "My Reviews", path: "/dashboard/user/reviews", icon: "Star" },
+            { label: "Go For Payment", path: "/dashboard/user/payment", icon: "Payment" },
         ],
     };
 

@@ -162,6 +162,7 @@ export default function CopiedPromptDashboard({
                                 >
                                     <Trash2 size={14} />
                                 </button>
+                                
                             </div>
                         </div>
                     ))

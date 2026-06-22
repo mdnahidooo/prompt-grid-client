@@ -3,50 +3,43 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@heroui/react";
+import { getCopiedPrompts } from "@/lib/api/copied-prompts";
 
 export default async function UserProfilePage() {
     const session = await auth.api.getSession({
         headers: await headers(),
     });
 
-    if (!session) {
-        redirect("/auth/signin");
-    }
+    if (!session) redirect("/auth/signin");
 
-    const { user } = session;
+    const user = session.user;
 
-    // 🔥 FETCH USER STATS FROM DB (you should replace with real API)
-    const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/stats?userId=${user.id}`,
-        { cache: "no-store" }
-    );
+    // ONLY YOUR WORKING COPY SYSTEM
+    const copyRes = await getCopiedPrompts(user.id);
+    const totalCopy = copyRes?.stats?.totalCopy || 0;
 
-    const stats = await res.json();
-
-    const totalCopy = stats?.totalCopy || 0;
-    const totalPrompts = stats?.totalPrompts || 0;
-    const totalBookmarks = stats?.bookmarks || 0;
-
-    const currentPlan = user.plan || "free";
+    // PLAN FIX (force latest value from session)
+    const plan = (user.plan || "free").toLowerCase();
+    const isPremium = plan === "premium";
 
     return (
-        <div className="space-y-6 max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto space-y-8">
 
             {/* HEADER */}
-            <div className="border-b border-[#306D29]/10 pb-4">
-                <h1 className="text-2xl font-black text-black">
-                    Account Profile
+            <div>
+                <h1 className="text-3xl font-black text-black">
+                    My Profile
                 </h1>
-                <p className="text-xs text-black/60">
-                    Manage your account, plan, and activity overview
+                <p className="text-sm text-black/60">
+                    Manage your account & subscription
                 </p>
             </div>
 
             {/* PROFILE CARD */}
-            <div className="bg-white border border-[#306D29]/10 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row items-center gap-6">
+            <div className="bg-white border rounded-3xl p-6 flex flex-col md:flex-row gap-6 shadow-sm">
 
                 {/* IMAGE */}
-                <div className="relative w-24 h-24 rounded-2xl overflow-hidden border border-[#306D29]/20 bg-[#306D29]/5">
+                <div className="relative w-28 h-28 rounded-2xl overflow-hidden border bg-gray-50">
                     {user.image ? (
                         <Image
                             src={user.image}
@@ -56,94 +49,111 @@ export default async function UserProfilePage() {
                             unoptimized
                         />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center text-2xl font-black text-[#306D29]">
+                        <div className="w-full h-full flex items-center justify-center text-3xl font-black text-[#306D29]">
                             {user.name?.[0]?.toUpperCase()}
                         </div>
                     )}
                 </div>
 
-                {/* INFO */}
-                <div className="flex-1 text-center sm:text-left space-y-1">
-                    <h2 className="text-lg font-black text-black">
+                {/* USER INFO */}
+                <div className="flex-1 space-y-2">
+
+                    <h2 className="text-2xl font-black text-black">
                         {user.name}
                     </h2>
-                    <p className="text-xs text-black/60">{user.email}</p>
 
-                    <div className="flex flex-wrap justify-center sm:justify-start gap-2 pt-2">
+                    <p className="text-sm text-gray-500">
+                        {user.email}
+                    </p>
 
-                        <span className="text-[10px] px-2 py-1 rounded bg-[#306D29]/10 text-[#306D29] font-bold uppercase">
+                    {/* EXTRA USER INFO */}
+                    <div className="text-xs text-gray-500 space-y-1 pt-1">
+                        <p>📅 Joined: {new Date(user.createdAt).toDateString()}</p>
+                    </div>
+
+                    {/* BADGES */}
+                    <div className="flex flex-wrap gap-2 pt-3">
+
+                        <span className="px-3 py-1 text-xs bg-gray-100 rounded-full">
                             Role: {user.role}
                         </span>
 
-                        <span
-                            className={`text-[10px] px-2 py-1 rounded font-bold uppercase border ${currentPlan === "premium"
-                                    ? "bg-amber-100 text-amber-800 border-amber-200"
-                                    : "bg-gray-100 text-gray-600 border-gray-200"
-                                }`}
+                        <span className={`px-3 py-1 text-xs rounded-full font-bold
+                            ${isPremium
+                                ? "bg-green-600 text-white"
+                                : "bg-gray-200 text-gray-700"
+                            }`}
                         >
-                            Plan: {currentPlan}
+                            {isPremium ? "Premium User" : "Free Plan"}
                         </span>
 
-                        <span className="text-[10px] px-2 py-1 rounded bg-blue-50 text-blue-600 font-bold uppercase">
-                            ID: {user.id}
+                        <span className="px-3 py-1 text-xs bg-blue-50 text-blue-600 rounded-full">
+                            Copied: {totalCopy}
                         </span>
+
                     </div>
                 </div>
 
-                {/* UPGRADE SECTION */}
-                <div className="w-full sm:w-auto">
-                    {currentPlan === "free" ? (
-                        <form action="/api/subscription" method="POST">
-                            <Button
-                                type="submit"
-                                className="bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-amber-700 w-full"
-                            >
-                                Upgrade to Premium ($5)
-                            </Button>
-                        </form>
+                {/* UPGRADE SECTION (FIXED UI ISSUE) */}
+                <div className="w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 sm:border-l border-black/5 sm:pl-6 flex flex-col items-center sm:items-start gap-2">
+
+                    {!isPremium ? (
+                        <>
+                            <div className="text-center sm:text-left">
+                                <h4 className="text-xs font-black text-amber-700 uppercase">
+                                    Unlock Premium
+                                </h4>
+                                <p className="text-[11px] text-black/50 mt-1">
+                                    Get full access for $5 only
+                                </p>
+                            </div>
+
+                            <form action="/api/subscription" method="POST">
+                                <Button
+                                    type="submit"
+                                    className="bg-amber-600 text-white text-xs font-black px-4 py-2 rounded-xl hover:bg-amber-700 w-full sm:w-auto"
+                                >
+                                    Upgrade to Premium
+                                </Button>
+                            </form>
+                        </>
                     ) : (
-                        <div className="bg-green-100 text-green-700 px-4 py-2 rounded-xl text-xs font-bold text-center">
-                            You are Premium User ✔
+                        <div className="flex flex-col items-center sm:items-start gap-2">
+                            <div className="text-green-600 font-black text-sm">
+                                ✔ You are Premium User
+                            </div>
+
+                            <button
+                                disabled
+                                className="bg-green-100 text-green-700 text-xs px-4 py-2 rounded-xl cursor-not-allowed font-bold"
+                            >
+                                Already Upgraded
+                            </button>
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* STATS GRID */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* STATS (NO EXTRA API USED) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                <div className="p-5 bg-white border rounded-2xl shadow-sm">
-                    <p className="text-xs text-gray-500 font-bold uppercase">
-                        Total Prompts
+                <div className="bg-white border rounded-2xl p-5">
+                    <p className="text-xs text-gray-500">Total Copied Prompts</p>
+                    <h2 className="text-3xl font-black">{totalCopy}</h2>
+                </div>
+
+                <div className="bg-white border rounded-2xl p-5">
+                    <p className="text-xs text-gray-500">Account Status</p>
+                    <h2 className="text-xl font-black">
+                        {isPremium ? "Premium Active" : "Free Account"}
+                    </h2>
+                    <p className="text-xs text-gray-400 mt-1">
+                        {isPremium
+                            ? "All features unlocked"
+                            : "Upgrade to unlock premium prompts"}
                     </p>
-                    <h2 className="text-3xl font-black mt-2">{totalPrompts}</h2>
                 </div>
 
-                <div className="p-5 bg-white border rounded-2xl shadow-sm">
-                    <p className="text-xs text-gray-500 font-bold uppercase">
-                        Total Copy
-                    </p>
-                    <h2 className="text-3xl font-black mt-2">{totalCopy}</h2>
-                </div>
-
-                <div className="p-5 bg-white border rounded-2xl shadow-sm">
-                    <p className="text-xs text-gray-500 font-bold uppercase">
-                        Bookmarks
-                    </p>
-                    <h2 className="text-3xl font-black mt-2">{totalBookmarks}</h2>
-                </div>
-            </div>
-
-            {/* EXTRA INFO */}
-            <div className="bg-white border rounded-2xl p-5">
-                <h3 className="text-sm font-bold mb-3">Account Info</h3>
-
-                <div className="text-xs text-gray-600 space-y-1">
-                    <p>📧 Email Verified: {user.emailVerified ? "Yes" : "No"}</p>
-                    <p>📅 Created: {new Date(user.createdAt).toDateString()}</p>
-                    <p>🔐 Role: {user.role}</p>
-                    <p>💳 Plan: {currentPlan}</p>
-                </div>
             </div>
         </div>
     );
