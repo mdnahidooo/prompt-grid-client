@@ -1,3 +1,92 @@
+// import { auth } from "@/lib/auth";
+// import { headers } from "next/headers";
+// import { redirect } from "next/navigation";
+// import { getMyReviews } from "@/lib/api/reviews";
+
+// export default async function MyReviewsPage() {
+//     const session = await auth.api.getSession({
+//         headers: await headers(),
+//     });
+
+//     if (!session) redirect("/auth/signin");
+
+//     const user = session.user;
+
+//     const res = await getMyReviews(user.id || user._id);
+//     const reviews = res?.data || [];
+
+//     return (
+//         <div className="max-w-5xl mx-auto py-10 space-y-6">
+
+//             {/* HEADER */}
+//             <div>
+//                 <h1 className="text-3xl font-bold text-[#212121]">
+//                     My Reviews
+//                 </h1>
+//                 <p className="text-sm text-gray-500">
+//                     All reviews you have written on prompts
+//                 </p>
+//             </div>
+
+//             {/* TABLE WRAPPER */}
+//             <div className="bg-white border border-[#E7E1B1] rounded-2xl overflow-hidden shadow-sm">
+
+//                 {/* TABLE HEADER */}
+//                 <div className="grid grid-cols-12 p-4 bg-[#FAF7F0] text-xs font-semibold text-gray-600 border-b">
+//                     <div className="col-span-3">Rating</div>
+//                     <div className="col-span-6">Review</div>
+//                     <div className="col-span-3">Date</div>
+//                 </div>
+
+//                 {/* BODY */}
+//                 {reviews.length === 0 ? (
+//                     <div className="p-10 text-center text-gray-400 text-sm">
+//                         No reviews found
+//                     </div>
+//                 ) : (
+//                     reviews.map((item) => (
+//                         <div
+//                             key={item._id}
+//                             className="grid grid-cols-12 p-4 border-b hover:bg-[#FAF7F0] transition"
+//                         >
+
+//                             {/* RATING */}
+//                             <div className="col-span-3 flex items-center gap-2 text-[#059669] font-semibold">
+//                                 ⭐ {item.rating}/5
+//                             </div>
+
+//                             {/* REVIEW */}
+//                             <div className="col-span-6 text-sm text-gray-700 line-clamp-2">
+//                                 {item.review || "No review text"}
+//                             </div>
+
+//                             {/* DATE */}
+//                             <div className="col-span-3 text-xs text-gray-400">
+//                                 {item.createdAt
+//                                     ? new Date(item.createdAt).toLocaleDateString()
+//                                     : "N/A"}
+//                             </div>
+
+//                         </div>
+//                     ))
+//                 )}
+//             </div>
+//         </div>
+//     );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -12,59 +101,118 @@ export default async function MyReviewsPage() {
 
     const user = session.user;
 
-    const res = await getMyReviews(user.id);
+    const res = await getMyReviews(user.id || user._id);
     const reviews = res?.data || [];
 
     return (
-        <div className="max-w-5xl mx-auto py-8 space-y-6">
+        <div className="min-h-screen bg-[#FAF7F0] py-10 px-4">
 
-            {/* HEADER */}
-            <div>
-                <h1 className="text-2xl font-black text-black">
-                    My Reviews
-                </h1>
-                <p className="text-sm text-gray-500">
-                    All your submitted reviews
-                </p>
-            </div>
-
-            {/* TABLE */}
-            <div className="bg-white border rounded-2xl overflow-hidden">
+            <div className="max-w-5xl mx-auto space-y-8">
 
                 {/* HEADER */}
-                <div className="grid grid-cols-12 p-3 bg-gray-50 text-xs font-bold text-gray-500 border-b">
-                    <div className="col-span-3">Prompt</div>
-                    <div className="col-span-6">Review</div>
-                    <div className="col-span-3">Date</div>
+                <div>
+                    <h1 className="text-3xl md:text-4xl font-bold text-[#212121]">
+                        My Reviews
+                    </h1>
+                    <p className="text-gray-500 mt-2">
+                        Your feedback on prompts you’ve used and rated
+                    </p>
                 </div>
 
-                {/* BODY */}
+                {/* STATS BAR */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+
+                    <div className="bg-white border border-[#E7E1B1] rounded-2xl p-4">
+                        <p className="text-xs text-gray-500">Total Reviews</p>
+                        <h2 className="text-2xl font-bold text-[#059669]">
+                            {reviews.length}
+                        </h2>
+                    </div>
+
+                    <div className="bg-white border border-[#E7E1B1] rounded-2xl p-4">
+                        <p className="text-xs text-gray-500">Average Rating</p>
+                        <h2 className="text-2xl font-bold text-[#059669]">
+                            {reviews.length
+                                ? (
+                                    reviews.reduce((acc, r) => acc + r.rating, 0) /
+                                    reviews.length
+                                ).toFixed(1)
+                                : "0.0"}
+                        </h2>
+                    </div>
+
+                    <div className="bg-white border border-[#E7E1B1] rounded-2xl p-4">
+                        <p className="text-xs text-gray-500">Best Rating</p>
+                        <h2 className="text-2xl font-bold text-[#059669]">
+                            {reviews.length
+                                ? Math.max(...reviews.map(r => r.rating))
+                                : 0}
+                        </h2>
+                    </div>
+
+                </div>
+
+                {/* CONTENT */}
                 {reviews.length === 0 ? (
-                    <div className="p-10 text-center text-gray-400 text-sm">
-                        No reviews found
+                    <div className="text-center py-20 bg-white border border-[#E7E1B1] rounded-3xl">
+                        <p className="text-gray-500">No reviews yet</p>
                     </div>
                 ) : (
-                    reviews.map((item) => (
-                        <div
-                            key={item._id}
-                            className="grid grid-cols-12 p-3 border-b hover:bg-gray-50"
-                        >
-                            <div className="col-span-3 font-medium text-black">
-                                {item.promptTitle || "Untitled"}
-                            </div>
+                    <div className="grid gap-5">
 
-                            <div className="col-span-6 text-sm text-gray-600 line-clamp-2">
-                                {item.review}
-                            </div>
+                        {reviews.map((item) => (
+                            <div
+                                key={item._id}
+                                className="group bg-white border border-[#E7E1B1] rounded-3xl p-5 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1"
+                            >
 
-                            <div className="col-span-3 text-xs text-gray-400">
-                                {item.createdAt
-                                    ? new Date(item.createdAt).toLocaleString()
-                                    : "N/A"}
+                                {/* TOP ROW */}
+                                <div className="flex items-start justify-between">
+
+                                    {/* LEFT */}
+                                    <div>
+                                        <div className="flex items-center gap-2 text-[#059669] font-semibold">
+                                            ⭐ {item.rating}/5
+                                        </div>
+
+                                        <p className="text-xs text-gray-400 mt-1">
+                                            {item.createdAt
+                                                ? new Date(item.createdAt).toLocaleString()
+                                                : "N/A"}
+                                        </p>
+                                    </div>
+
+                                    {/* BADGE */}
+                                    <div className="text-[10px] px-3 py-1 rounded-full bg-[#FAF7F0] border border-[#E7E1B1] text-[#059669]">
+                                        Prompt Review
+                                    </div>
+
+                                </div>
+
+                                {/* REVIEW TEXT */}
+                                <p className="mt-4 text-gray-700 text-sm leading-relaxed">
+                                    {item.review || "No review text provided."}
+                                </p>
+
+                                {/* FOOTER */}
+                                <div className="mt-4 flex justify-between items-center text-xs text-gray-500">
+
+                                    <span>
+                                        Prompt ID: {item.promptId?.slice?.(-6) || "N/A"}
+                                    </span>
+
+                                    <span className="opacity-0 group-hover:opacity-100 transition text-[#059669] font-medium">
+                                        View Prompt →
+                                    </span>
+
+                                </div>
+
                             </div>
-                        </div>
-                    ))
+                        ))}
+
+                    </div>
                 )}
+
             </div>
         </div>
     );

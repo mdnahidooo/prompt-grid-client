@@ -6,5 +6,9 @@ export const getAllReviews = async () => {
 
 
 export const getMyReviews = async (userId) => {
-    return serverFetch(`/api/reviews/my?userId=${userId}`);
+    if (!userId) {
+        throw new Error("userId is required");
+    }
+
+    return serverFetch(`/api/user/reviews?userId=${userId}`);
 };
