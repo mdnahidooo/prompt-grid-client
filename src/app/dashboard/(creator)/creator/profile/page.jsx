@@ -22,7 +22,7 @@ export default async function CreatorProfilePage() {
     const recent = dashboard?.recentActivity || [];
 
     return (
-        <div className="min-h-screen bg-linear-to-b from-slate-50 to-white py-10 px-4">
+        <div className="min-h-screen py-10 px-4">
 
             <div className="max-w-5xl mx-auto space-y-6">
 
