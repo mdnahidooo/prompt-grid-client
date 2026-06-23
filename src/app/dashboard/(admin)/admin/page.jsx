@@ -1,11 +1,14 @@
-import React from 'react';
+import { getAdminAnalytics } from "@/lib/api/admin/analytics";
+import AdminDashboardClient from "./AdminDashboardClient";
 
-const page = () => {
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
+    const data = await getAdminAnalytics();
+
     return (
-        <div>
-            admin page
+        <div className="min-h-screen">
+            <AdminDashboardClient data={data} />
         </div>
     );
-};
-
-export default page;
+}
