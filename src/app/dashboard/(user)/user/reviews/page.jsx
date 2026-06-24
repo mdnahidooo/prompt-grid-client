@@ -16,7 +16,7 @@ export default async function MyReviewsPage() {
     const reviews = res?.data || [];
 
     return (
-        <div className="min-h-screen bg-[#FAF7F0] py-10 px-4">
+        <div >
 
             <div className="max-w-5xl mx-auto space-y-8">
 

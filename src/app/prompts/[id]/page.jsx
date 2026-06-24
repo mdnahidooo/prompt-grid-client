@@ -6,6 +6,20 @@ import { getUserSession } from "@/lib/core/session";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
+
+export async function generateMetadata({ params }) {
+    const { id } = await params;
+
+    const prompt = await getPromptById(id);
+
+    return {
+        title: prompt?.title || "Prompt Details",
+        description:
+            prompt?.description || "View prompt details",
+    };
+}
+
+
 export default async function PromptDetailsPage({ params }) {
     const { id } = await params;
 
