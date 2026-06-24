@@ -1,29 +1,29 @@
 import { getAllPayments } from "@/lib/actions/payment";
 
 export default async function AdminPaymentsPage() {
-
     const res = await getAllPayments();
 
-    const payments = res?.payments || [];
+    const payments = Array.isArray(res?.payments)
+        ? res.payments
+        : [];
 
     const totalRevenue = payments
-        .filter((item) => item.status === "paid")
+        .filter((payment) => payment?.status === "paid")
         .reduce(
-            (sum, item) => sum + Number(item.amount || 0),
-            0
-        );
+            (sum, payment) => sum + Number(payment?.amount || 0), 0);
 
     const successfulPayments = payments.filter(
-        (item) => item.status === "paid"
+        (payment) => payment?.status === "paid"
     ).length;
 
     const failedPayments = payments.filter(
-        (item) => item.status !== "paid"
+        (payment) => payment?.status !== "paid"
     ).length;
 
     return (
         <div className="space-y-6">
 
+            {/* Header */}
             <div>
                 <h1 className="text-3xl font-black text-black">
                     All Payments
@@ -35,8 +35,7 @@ export default async function AdminPaymentsPage() {
             </div>
 
             {/* Stats */}
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 
                 <div className="bg-white border rounded-2xl p-5">
                     <p className="text-xs text-gray-500">
@@ -71,7 +70,6 @@ export default async function AdminPaymentsPage() {
             </div>
 
             {/* Table */}
-
             <div className="bg-white border rounded-2xl overflow-hidden">
 
                 <div className="overflow-x-auto">
@@ -81,7 +79,6 @@ export default async function AdminPaymentsPage() {
                         <thead className="bg-gray-50 border-b">
 
                             <tr>
-
                                 <th className="px-5 py-4 text-left text-xs font-black uppercase">
                                     Email
                                 </th>
@@ -105,68 +102,68 @@ export default async function AdminPaymentsPage() {
                                 <th className="px-5 py-4 text-left text-xs font-black uppercase">
                                     Date
                                 </th>
-
                             </tr>
 
                         </thead>
 
                         <tbody>
 
-                            {payments.map((payment) => (
+                            {payments.length > 0 ? (
+                                payments.map((payment) => (
+                                    <tr
+                                        key={payment?._id}
+                                        className="border-b hover:bg-gray-50"
+                                    >
+                                        <td className="px-5 py-4">
+                                            {payment?.userEmail || "-"}
+                                        </td>
 
-                                <tr
-                                    key={payment._id}
-                                    className="border-b hover:bg-gray-50"
-                                >
+                                        <td className="px-5 py-4 text-xs">
+                                            {payment?.userId || "-"}
+                                        </td>
 
-                                    <td className="px-5 py-4">
-                                        {payment.userEmail}
+                                        <td className="px-5 py-4 font-bold">
+                                            ${payment?.amount || 0}
+                                        </td>
+
+                                        <td className="px-5 py-4">
+                                            <span
+                                                className={`px-3 py-1 rounded-full text-xs font-bold ${payment?.status === "paid"
+                                                        ? "bg-green-100 text-green-700"
+                                                        : "bg-red-100 text-red-700"
+                                                    }`}
+                                            >
+                                                {payment?.status || "unknown"}
+                                            </span>
+                                        </td>
+
+                                        <td className="px-5 py-4 text-xs max-w-62.5 truncate">
+                                            {payment?.sessionId || "-"}
+                                        </td>
+
+                                        <td className="px-5 py-4 text-sm">
+                                            {payment?.createdAt
+                                                ? new Date(
+                                                    payment.createdAt
+                                                ).toLocaleString()
+                                                : "-"}
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td
+                                        colSpan={6}
+                                        className="text-center py-10 text-gray-500"
+                                    >
+                                        No payment found
                                     </td>
-
-                                    <td className="px-5 py-4 text-xs">
-                                        {payment.userId}
-                                    </td>
-
-                                    <td className="px-5 py-4 font-bold">
-                                        ${payment.amount}
-                                    </td>
-
-                                    <td className="px-5 py-4">
-
-                                        <span
-                                            className={`px-3 py-1 rounded-full text-xs font-bold ${payment.status === "paid"
-                                                    ? "bg-green-100 text-green-700"
-                                                    : "bg-red-100 text-red-700"
-                                                }`}
-                                        >
-                                            {payment.status}
-                                        </span>
-
-                                    </td>
-
-                                    <td className="px-5 py-4 text-xs max-w-62.5 truncate">
-                                        {payment.sessionId}
-                                    </td>
-
-                                    <td className="px-5 py-4 text-sm">
-                                        {new Date(
-                                            payment.createdAt
-                                        ).toLocaleString()}
-                                    </td>
-
                                 </tr>
-
-                            ))}
+                            )}
 
                         </tbody>
 
                     </table>
-
-                    {payments.length === 0 && (
-                        <div className="p-10 text-center text-gray-500">
-                            No payment found
-                        </div>
-                    )}
 
                 </div>
 
