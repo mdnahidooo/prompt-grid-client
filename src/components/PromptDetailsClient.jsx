@@ -23,7 +23,8 @@ import { incrementCopyCount } from "@/lib/actions/copied-prompts";
 export default function PromptDetailsClient({
     prompt,
     user,
-    fullAccess = false
+    fullAccess = false,
+    currentUser
 }) {
     const [copied, setCopied] = useState(false);
     const [bookmarked, setBookmarked] = useState(false);
@@ -99,7 +100,7 @@ export default function PromptDetailsClient({
                             src={imageSrc}
                             alt={prompt.title}
                             fill
-                            // className="object-cover"
+                        // className="object-cover"
                         />
 
                         <div className="absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs flex items-center gap-1 shadow-sm">
@@ -252,6 +253,7 @@ export default function PromptDetailsClient({
                             <CopyButton
                                 promptId={prompt._id}
                                 user={user}
+                                currentUser={currentUser}
                                 visibility={prompt.visibility}
                                 content={prompt.content}
                                 title={prompt.title}
@@ -260,12 +262,14 @@ export default function PromptDetailsClient({
                             <BookmarkButton
                                 promptId={prompt._id}
                                 user={user}
+                                currentUser={currentUser}
                                 visibility={prompt.visibility}
                             />
 
                             <ReportButton
                                 promptId={prompt._id}
                                 user={user}
+                                currentUser={currentUser}
                                 visibility={prompt.visibility}
                             />
                         </div>
@@ -281,6 +285,7 @@ export default function PromptDetailsClient({
                     initialCount={prompt.ratingCount || 0}
                     user={user}
                     visibility={prompt.visibility}
+                    
                 />
             </div>
         </div>

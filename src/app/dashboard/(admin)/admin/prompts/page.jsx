@@ -183,12 +183,21 @@ export default async function AdminPromptsPage() {
 
                                         <DeletePromptModal prompt={prompt}></DeletePromptModal>
 
-                                        <Link
+                                        {/* <Link
                                             href={`/ dashboard / admin / prompts / ${prompt._id} `}
                                             className="p-2 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200"
                                             title="View"
                                         >
                                             <Eye size={16} />
+                                        </Link> */}
+
+                                        <Link
+                                            href={`/prompts/${prompt._id}`}
+                                        >
+                                            <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#059669] text-white text-[11px] font-medium hover:bg-[#047857] transition">
+                                                <Eye size={16} />
+                                                {/* View */}
+                                            </button>
                                         </Link>
                                     </div>
                                 </td>

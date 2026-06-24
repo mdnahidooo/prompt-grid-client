@@ -8,6 +8,7 @@ import { Card, Table, Button } from '@heroui/react';
 import UpdatePromptModal from './UpdatePromptModal';
 import DeletePromptModal from './DeletePromptModal';
 import RejectFeedbackModal from './RejectFeedbackModal';
+import { Eye } from 'lucide-react';
 
 export default function MyPrompts({ prompts}) {
     return (
@@ -130,6 +131,15 @@ export default function MyPrompts({ prompts}) {
                                                     {/* <PromptDetailsButton
                                                         prompt={prompt}
                                                     /> */}
+
+                                                    <Link
+                                                        href={`/prompts/${prompt._id}`}
+                                                    >
+                                                        <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#059669] text-white text-[11px] font-medium hover:bg-[#047857] transition">
+                                                            <Eye size={12} />
+                                                            View
+                                                        </button>
+                                                    </Link>
 
                                                     <UpdatePromptModal
                                                         prompt={prompt}

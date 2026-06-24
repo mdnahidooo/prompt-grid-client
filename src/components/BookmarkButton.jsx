@@ -14,11 +14,12 @@ export default function BookmarkButton({
     promptId,
     user,
     visibility,
+    currentUser
 }) {
     const [bookmarked, setBookmarked] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const userPlan = user?.plan || "free";
+    const userPlan = currentUser?.plan || "free";
     const isPrivate = visibility === "private";
 
     // ❌ ONLY BLOCK CONDITION

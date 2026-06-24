@@ -11,12 +11,13 @@ export default function CopyButton({
     user,
     visibility,
     content,
-    title
+    title,
+    currentUser
 }) {
     const [loading, setLoading] = useState(false);
     const [copied, setCopied] = useState(false);
 
-    const userPlan = (user?.plan || "free").toLowerCase();
+    const userPlan = (currentUser?.plan || "free").toLowerCase();
     const isPrivate = visibility === "private";
 
     // ONLY BLOCK RULE

@@ -9,12 +9,13 @@ export default function ReportButton({
     promptId,
     user,
     visibility,
+    currentUser
 }) {
     const [open, setOpen] = useState(false);
     const [reason, setReason] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const userPlan = (user?.plan || "free").toLowerCase();
+    const userPlan = (currentUser?.plan || "free").toLowerCase();
     const isPrivate = visibility === "private";
 
     // ❌ ONLY BLOCK RULE

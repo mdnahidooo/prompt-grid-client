@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { removeBookmark } from "@/lib/actions/bookmark";
 import { toast } from "react-toastify";
+import Link from "next/link";
+import { Eye } from "lucide-react";
 
 export default function BookmarkListClient({ initialData, user }) {
     const [items, setItems] = useState(initialData || []);
@@ -46,12 +48,23 @@ export default function BookmarkListClient({ initialData, user }) {
                         </p>
                     </div>
 
-                    <button
-                        onClick={() => handleRemove(p._id)}
-                        className="px-3 py-1 text-sm bg-red-100 text-red-600 rounded"
-                    >
-                        Remove
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => handleRemove(p._id)}
+                            className="px-3 py-1 text-sm bg-red-100 text-red-600 rounded"
+                        >
+                            Remove
+                        </button>
+
+                        <Link
+                            href={`/prompts/${p._id}`}
+                        >
+                            <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#059669] text-white text-[11px] font-medium hover:bg-[#047857] transition">
+                                <Eye size={12} />
+                                View
+                            </button>
+                        </Link>
+                   </div>
                 </div>
             ))}
         </div>
