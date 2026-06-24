@@ -285,7 +285,7 @@ export default function PromptDetailsClient({
                     initialCount={prompt.ratingCount || 0}
                     user={user}
                     visibility={prompt.visibility}
-                    
+                    currentUser={currentUser}
                 />
             </div>
         </div>

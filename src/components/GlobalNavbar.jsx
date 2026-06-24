@@ -148,7 +148,9 @@ export default function GlobalNavbar() {
                                                 ? "bg-amber-500/10 text-amber-800 border-amber-500/20"
                                                 : "bg-[#306D29]/10 text-[#059669] border-[#306D29]/20"
                                             }`}>
-                                            {user.plan || "free"}
+                                                {/* {user.plan || "free"} */}
+                                                {user.role || "User"}
+                                                
                                         </span>
                                     </div>
                                     <ChevronDown className={`w-3 h-3 text-black/30 transition-transform duration-200 hidden md:block ${isDropdownOpen ? "rotate-180" : ""}`} />
@@ -250,7 +252,8 @@ export default function GlobalNavbar() {
                                             ? "bg-amber-500/10 text-amber-800 border-amber-500/20"
                                         : "bg-[#306D29]/10 text-[#059669] border border-[#306D29]/20"
                                         }`}>
-                                        {user.plan || "free"}
+                                        {/* {user.plan || "free"} */}
+                                        {user.role|| "User"}
                                     </span>
                                 </div>
                             </div>
