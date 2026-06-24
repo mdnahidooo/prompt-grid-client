@@ -108,13 +108,13 @@ export default async function MyReviewsPage() {
                                 {/* FOOTER */}
                                 <div className="mt-4 flex justify-between items-center text-xs text-gray-500">
 
-                                    <span>
-                                        Prompt ID: {item.promptId?.slice?.(-6) || "N/A"}
-                                    </span>
+                                    {/* <span>
+                                        Prompt ID: {item.title?.slice?.(-6) || "N/A"}
+                                    </span> */}
 
-                                    <span className="opacity-0 group-hover:opacity-100 transition text-[#059669] font-medium">
+                                    {/* <span className="opacity-0 group-hover:opacity-100 transition text-[#059669] font-medium">
                                         View Prompt →
-                                    </span>
+                                    </span> */}
 
                                 </div>
 

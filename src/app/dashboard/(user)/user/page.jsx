@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@heroui/react";
 import { getCopiedPrompts } from "@/lib/api/copied-prompts";
+import { getCurrentUser } from "@/lib/api/user";
 
 export default async function UserProfilePage() {
     const session = await auth.api.getSession({
@@ -12,10 +13,15 @@ export default async function UserProfilePage() {
 
     if (!session) redirect("/auth/signin");
 
-    const user = session.user;
+    // const user = session.user;
+    // 🔥 FRESH USER FROM DATABASE (NO DB IMPORT!)
+    const res = await getCurrentUser(session.user.id);
+    const user = res?.user;
+
+    if (!user) redirect("/auth/signin");
 
     // ONLY YOUR WORKING COPY SYSTEM
-    const copyRes = await getCopiedPrompts(user.id);
+    const copyRes = await getCopiedPrompts(session.user.id);
     const totalCopy = copyRes?.stats?.totalCopy || 0;
 
     // PLAN FIX (force latest value from session)
