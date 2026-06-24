@@ -69,7 +69,7 @@ export default function AdminDashboardClient({ data }) {
                     Admin Analytics Dashboard
                 </h1>
                 <p className="text-slate-500 mt-2">
-                    System overview, engagement & SaaS insights
+                    System overview, engagement insights
                 </p>
             </div>
 
