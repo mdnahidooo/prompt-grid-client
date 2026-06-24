@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Button } from "@heroui/react";
+import { getCurrentUser } from "@/lib/api/user";
 
 export default async function PaymentPage() {
     const session = await auth.api.getSession({
@@ -9,8 +10,13 @@ export default async function PaymentPage() {
     });
 
     if (!session) redirect("/auth/signin");
+    
+    const res = await getCurrentUser(session.user.id);
+    const user = res?.user;
 
-    const user = session.user;
+    if (!user) redirect("/auth/signin");
+
+    // const user = session.user;
     const isPremium = (user.plan || "free").toLowerCase() === "premium";
 
     return (

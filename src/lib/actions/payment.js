@@ -13,3 +13,16 @@ export const subscription = async (data) => {
 
     return res.json();
 };
+
+
+
+export const getAllPayments = async () => {
+    const res = await fetch(
+        `${baseUrl}/payments`,
+        {
+            cache: "no-store",
+        }
+    );
+
+    return res.json();
+};
