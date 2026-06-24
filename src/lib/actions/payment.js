@@ -18,17 +18,9 @@ export const subscription = async (data) => {
 
 export const getAllPayments = async () => {
     try {
-        const res = await fetch(
-            `${baseUrl}/payments`,
-            {
-                cache: "no-store",
-            }
-        );
+        const res = await fetch(`${baseUrl}/payments`);
 
-        const data = await res.json();
-
-        return data;
-
+        return await res.json();
     } catch (error) {
         console.error(error);
 
