@@ -2,15 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { serverMutation } from "../core/server";
+import { serverMutationWithToken } from "../core/getTokenServer";
 
 export const createPrompt = async (newPromptData) => {
-    return await serverMutation('/api/prompts', newPromptData);
+    return await serverMutationWithToken('/api/prompts', newPromptData);
 };
 
 
 // Update prompt status or content
 export const updatePrompt = async (id, data) => {
-    const result = await serverMutation(`/api/prompts/${id}`, data, 'PATCH');
+    const result = await serverMutationWithToken(`/api/prompts/${id}`, data, 'PATCH');
     revalidatePath('/dashboard/creator/my-prompts');
 
     return result;

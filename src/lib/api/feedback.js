@@ -1,8 +1,10 @@
-import { serverFetch } from "@/lib/core/server";
+
+import { clientMutationWithToken } from "../core/getTokenClient";
+
 
 // Creator fetch rejection feedback for their prompt
 export const getRejectionFeedback = async (promptId) => {
     if (!promptId) return null;
 
-    return serverFetch(`/api/feedback/${promptId}`);
+    return clientMutationWithToken(`/api/feedback/${promptId}`);
 };
