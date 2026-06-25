@@ -2,9 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { serverMutation } from "../core/server";
+import { serverMutationWithToken } from "../core/getTokenServer";
 
 export const createPrompt = async (newPromptData) => {
-    return await serverMutation('/api/prompts', newPromptData);
+    return await serverMutationWithToken('/api/prompts', newPromptData);
 };
 
 
