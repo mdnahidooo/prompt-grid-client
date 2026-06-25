@@ -1,6 +1,7 @@
 "use server";
 
-import { serverMutation } from "@/lib/core/server";
+import { serverMutationWithToken } from "@/lib/core/getTokenServer";
+// import { serverMutation } from "@/lib/core/server";
 import { getUserSession } from "@/lib/core/session";
 import { revalidatePath } from "next/cache";
 
@@ -15,7 +16,7 @@ export const dismissReport = async (reportId) => {
         throw new Error("Unauthorized: Admin only action");
     }
 
-    const res = await serverMutation(
+    const res = await serverMutationWithToken(
         `/api/admin/reports/${reportId}/dismiss`,
         {},
         "PATCH"
@@ -37,7 +38,7 @@ export const warnCreator = async (reportId) => {
         throw new Error("Unauthorized: Admin only action");
     }
 
-    const res = await serverMutation(
+    const res = await serverMutationWithToken(
         `/api/admin/reports/${reportId}/warn`,
         {},
         "PATCH"
@@ -59,7 +60,7 @@ export const removeReportedPrompt = async (reportId) => {
         throw new Error("Unauthorized: Admin only action");
     }
 
-    const res = await serverMutation(
+    const res = await serverMutationWithToken(
         `/api/admin/reports/${reportId}/remove`,
         {},
         "PATCH"

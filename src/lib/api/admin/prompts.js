@@ -1,5 +1,6 @@
-import { serverFetch } from "@/lib/core/server";
+import { protectedServerFetch } from "@/lib/core/getTokenServer";
+
 
 export const getAdminPrompts = async () => {
-    return serverFetch("/api/admin/prompts");
+    return protectedServerFetch("/api/admin/prompts");
 };

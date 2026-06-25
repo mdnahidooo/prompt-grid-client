@@ -1,5 +1,6 @@
-import { serverFetch } from "@/lib/core/server";
+import { protectedServerFetch } from "@/lib/core/getTokenServer";
+
 
 export const getAdminUsers = async () => {
-    return serverFetch("/api/admin/users");
+    return protectedServerFetch("/api/admin/users");
 };

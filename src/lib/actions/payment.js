@@ -1,6 +1,17 @@
 "use server";
 
+import { headers } from "next/headers";
+import { auth } from "../auth";
+
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+export const getTokenServer = async () => {
+    const { token } = await auth.api.getToken({
+        headers: await headers(),
+    });
+
+    return token || null;
+};
 
 export const subscription = async (data) => {
     const res = await fetch(`${baseUrl}/subscription`, {
@@ -17,8 +28,15 @@ export const subscription = async (data) => {
 
 
 export const getAllPayments = async () => {
+    const token = await getTokenServer();
+    
     try {
-        const res = await fetch(`${baseUrl}/payments`);
+        const res = await fetch(`${baseUrl}/payments`, {
+            headers: {
+                "Content-Type": "application/json",
+                authorization: `Bearer ${token}`,
+            },
+        });
 
         return await res.json();
     } catch (error) {

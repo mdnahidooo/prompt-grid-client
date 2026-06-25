@@ -1,8 +1,9 @@
-import { serverFetch } from "@/lib/core/server";
+import { protectedServerFetch } from "@/lib/core/getTokenServer";
+
 
 /* =========================================
    GET ADMIN ANALYTICS DASHBOARD DATA
 ========================================= */
 export const getAdminAnalytics = async (queryString = "") => {
-    return serverFetch(`/api/admin/analytics?${queryString}`);
+    return protectedServerFetch(`/api/admin/analytics?${queryString}`);
 };

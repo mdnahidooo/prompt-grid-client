@@ -12,12 +12,12 @@ import {
     Select,
     ListBox,
     Button,
-    toast
 } from '@heroui/react';
 
 import { ArrowUpToLine, ChevronDown } from '@gravity-ui/icons';
 import { createPrompt } from '@/lib/actions/prompt';
 import Image from 'next/image';
+import { toast } from "react-toastify";
 
 // Updated Theme Constants (#FDFCF4 background)
 const textInputClass = "w-full bg-[#FDFCF4] border border-zinc-300 text-zinc-900 rounded-lg px-3 py-2.5 outline-none placeholder:text-zinc-400 focus:border-red-500 transition";
