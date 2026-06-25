@@ -1,12 +1,13 @@
 "use server";
 
+import { serverMutationWithToken } from "@/lib/core/getTokenServer";
 import { serverMutation } from "@/lib/core/server";
 import { getUserSession } from "@/lib/core/session";
 import { revalidatePath } from "next/cache";
 
 // Approve prompt
 export const approvePrompt = async (id) => {
-    const res = await serverMutation(
+    const res = await serverMutationWithToken(
         `/api/admin/prompts/${id}/status`,
         { status: "approved" },
         "PATCH"
@@ -18,7 +19,7 @@ export const approvePrompt = async (id) => {
 
 // Reject prompt
 export const rejectPrompt = async (data, id) => {
-    const res = await serverMutation(
+    const res = await serverMutationWithToken(
         `/api/admin/prompts/${id}/reject`,
         data,
         "PATCH"
@@ -31,7 +32,7 @@ export const rejectPrompt = async (data, id) => {
 
 // Toggle feature
 export const toggleFeature = async (id, current) => {
-    const res = await serverMutation(
+    const res = await serverMutationWithToken(
         `/api/admin/prompts/${id}/feature`,
         { isFeatured: !current },
         "PATCH"
@@ -51,7 +52,7 @@ export const deletePrompt = async (id) => {
         throw new Error("Unauthorized: Admin only action");
     }
 
-    const res = await serverMutation(
+    const res = await serverMutationWithToken(
         `/api/prompts/${id}`,
         {},
         "DELETE"
